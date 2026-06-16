@@ -3,11 +3,10 @@
  *
  * Soul Sounds — Archetype scoring data.
  *
- * This file holds ONLY the data the Soul Engine needs to match a user
- * to an archetype: a stable id, a human display name, and six
- * dimension values in the range 0–10. Presentation copy (identity,
- * keywords, emotional journey, etc.) lives separately in
- * archetypeContent.ts, keyed by the same id.
+ * Holds ONLY the data the Soul Engine needs to match a user to an
+ * archetype: a stable id, a human display name, and six dimension
+ * values in the range 0–10. Presentation copy (identity, keywords,
+ * emotional journey, etc.) lives in archetypeContent.ts, keyed by id.
  *
  * The six dimensions are the core axes of the Soul Engine:
  *   - energy      (0 = stillness, 10 = vitality)
@@ -16,6 +15,9 @@
  *   - risk        (0 = grounded / safe, 10 = daring / exploratory)
  *   - warmth      (0 = cool / spacious, 10 = warm / intimate)
  *   - intensity   (0 = gentle, 10 = powerful)
+ *
+ * This list contains the 18 OFFICIAL Soul Sounds archetypes. Do not
+ * add placeholder or invented archetypes.
  */
 
 export interface ArchetypeDimensions {
@@ -35,64 +37,34 @@ export interface ArchetypeScoring {
 
 export const archetypes: ArchetypeScoring[] = [
   {
-    id: "dreamer",
-    displayName: "The Dreamer",
-    dimensions: { energy: 3, focus: 2, structure: 2, risk: 6, warmth: 7, intensity: 3 },
+    id: "idealist",
+    displayName: "The Idealist",
+    dimensions: { energy: 5, focus: 7, structure: 5, risk: 6, warmth: 8, intensity: 6 },
   },
   {
-    id: "sage",
-    displayName: "The Sage",
-    dimensions: { energy: 3, focus: 9, structure: 8, risk: 3, warmth: 5, intensity: 4 },
+    id: "activist",
+    displayName: "The Activist",
+    dimensions: { energy: 9, focus: 8, structure: 6, risk: 8, warmth: 6, intensity: 9 },
   },
   {
-    id: "wanderer",
-    displayName: "The Wanderer",
-    dimensions: { energy: 6, focus: 3, structure: 2, risk: 8, warmth: 6, intensity: 5 },
+    id: "companion",
+    displayName: "The Companion",
+    dimensions: { energy: 5, focus: 6, structure: 6, risk: 3, warmth: 10, intensity: 4 },
   },
   {
-    id: "guardian",
-    displayName: "The Guardian",
-    dimensions: { energy: 5, focus: 8, structure: 9, risk: 2, warmth: 8, intensity: 6 },
+    id: "anchor",
+    displayName: "The Anchor",
+    dimensions: { energy: 4, focus: 7, structure: 9, risk: 2, warmth: 8, intensity: 5 },
   },
   {
-    id: "mystic",
-    displayName: "The Mystic",
-    dimensions: { energy: 2, focus: 7, structure: 4, risk: 6, warmth: 6, intensity: 4 },
+    id: "champion",
+    displayName: "The Champion",
+    dimensions: { energy: 9, focus: 9, structure: 7, risk: 7, warmth: 7, intensity: 10 },
   },
   {
-    id: "luminary",
-    displayName: "The Luminary",
-    dimensions: { energy: 8, focus: 8, structure: 6, risk: 7, warmth: 8, intensity: 8 },
-  },
-  {
-    id: "alchemist",
-    displayName: "The Alchemist",
-    dimensions: { energy: 6, focus: 7, structure: 5, risk: 9, warmth: 5, intensity: 7 },
-  },
-  {
-    id: "voyager",
-    displayName: "The Voyager",
-    dimensions: { energy: 8, focus: 6, structure: 4, risk: 9, warmth: 4, intensity: 7 },
-  },
-  {
-    id: "healer",
-    displayName: "The Healer",
-    dimensions: { energy: 4, focus: 6, structure: 6, risk: 3, warmth: 10, intensity: 3 },
-  },
-  {
-    id: "poet",
-    displayName: "The Poet",
-    dimensions: { energy: 4, focus: 5, structure: 4, risk: 5, warmth: 8, intensity: 4 },
-  },
-  {
-    id: "warrior",
-    displayName: "The Warrior",
-    dimensions: { energy: 9, focus: 9, structure: 7, risk: 8, warmth: 3, intensity: 10 },
-  },
-  {
-    id: "monarch",
-    displayName: "The Monarch",
-    dimensions: { energy: 7, focus: 8, structure: 9, risk: 5, warmth: 6, intensity: 9 },
+    id: "achiever",
+    displayName: "The Achiever",
+    dimensions: { energy: 8, focus: 10, structure: 9, risk: 5, warmth: 5, intensity: 8 },
   },
   {
     id: "muse",
@@ -100,19 +72,14 @@ export const archetypes: ArchetypeScoring[] = [
     dimensions: { energy: 6, focus: 4, structure: 3, risk: 7, warmth: 9, intensity: 5 },
   },
   {
-    id: "hermit",
-    displayName: "The Hermit",
-    dimensions: { energy: 2, focus: 8, structure: 6, risk: 3, warmth: 4, intensity: 3 },
+    id: "imagineer",
+    displayName: "The Imagineer",
+    dimensions: { energy: 7, focus: 5, structure: 4, risk: 8, warmth: 7, intensity: 6 },
   },
   {
-    id: "rebel",
-    displayName: "The Rebel",
-    dimensions: { energy: 9, focus: 6, structure: 2, risk: 10, warmth: 4, intensity: 9 },
-  },
-  {
-    id: "lover",
-    displayName: "The Lover",
-    dimensions: { energy: 6, focus: 5, structure: 5, risk: 6, warmth: 10, intensity: 7 },
+    id: "philosopher",
+    displayName: "The Philosopher",
+    dimensions: { energy: 3, focus: 9, structure: 7, risk: 4, warmth: 5, intensity: 4 },
   },
   {
     id: "architect",
@@ -120,8 +87,43 @@ export const archetypes: ArchetypeScoring[] = [
     dimensions: { energy: 5, focus: 10, structure: 10, risk: 4, warmth: 4, intensity: 6 },
   },
   {
-    id: "child",
-    displayName: "The Child",
-    dimensions: { energy: 8, focus: 3, structure: 2, risk: 7, warmth: 9, intensity: 5 },
+    id: "guardian",
+    displayName: "The Guardian",
+    dimensions: { energy: 5, focus: 8, structure: 9, risk: 2, warmth: 8, intensity: 6 },
+  },
+  {
+    id: "confidant",
+    displayName: "The Confidant",
+    dimensions: { energy: 4, focus: 7, structure: 6, risk: 3, warmth: 9, intensity: 4 },
+  },
+  {
+    id: "pathfinder",
+    displayName: "The Pathfinder",
+    dimensions: { energy: 7, focus: 8, structure: 6, risk: 8, warmth: 6, intensity: 7 },
+  },
+  {
+    id: "adventurer",
+    displayName: "The Adventurer",
+    dimensions: { energy: 9, focus: 5, structure: 3, risk: 10, warmth: 6, intensity: 8 },
+  },
+  {
+    id: "maverick",
+    displayName: "The Maverick",
+    dimensions: { energy: 9, focus: 6, structure: 2, risk: 10, warmth: 4, intensity: 9 },
+  },
+  {
+    id: "bear",
+    displayName: "The Bear",
+    dimensions: { energy: 6, focus: 6, structure: 8, risk: 3, warmth: 9, intensity: 7 },
+  },
+  {
+    id: "dreamer",
+    displayName: "The Dreamer",
+    dimensions: { energy: 3, focus: 2, structure: 2, risk: 6, warmth: 7, intensity: 3 },
+  },
+  {
+    id: "peacemaker",
+    displayName: "The Peacemaker",
+    dimensions: { energy: 3, focus: 6, structure: 6, risk: 2, warmth: 9, intensity: 2 },
   },
 ];
