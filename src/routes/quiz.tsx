@@ -110,7 +110,10 @@ function Quiz() {
             }`}
           >
             <div className="glass-card rounded-3xl p-8 sm:p-12">
-              <h2 className="font-display text-center text-3xl leading-tight text-foreground sm:text-4xl">
+              <p className="text-center text-xs uppercase tracking-[0.3em] text-foreground/50">
+                {current.category}
+              </p>
+              <h2 className="mt-4 font-display text-center text-3xl leading-tight text-foreground sm:text-4xl">
                 {current.question}
               </h2>
               {current.subtitle && (
