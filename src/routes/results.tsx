@@ -1,7 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { loadSoulResult, type StoredSoulResult } from "@/lib/soul-result";
 import { archetypeContent } from "@/data/archetypeContent";
+import { generateSoundPrompt, type FlavorAnswers } from "@/engine/promptGenerator";
+import type { FlavorOption } from "@/data/flavorMappings";
+
+const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
+
+function loadFlavorAnswers(): FlavorAnswers {
+  try {
+    const raw = localStorage.getItem(ANSWERS_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, string>;
+    const get = (id: number) =>
+      (["a", "b", "c", "d"] as const).includes(parsed[id] as FlavorOption)
+        ? (parsed[id] as FlavorOption)
+        : undefined;
+    return {
+      tempo: get(7),
+      instrumentation: get(8),
+      mood: get(9),
+      warmth: get(10),
+      atmosphere: get(11),
+      intensity: get(12),
+    };
+  } catch {
+    return {};
+  }
+}
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -56,9 +82,19 @@ function AudioPlaceholder() {
 
 function Results() {
   const [result, setResult] = useState<StoredSoulResult | null>(null);
+  const [flavorAnswers, setFlavorAnswers] = useState<FlavorAnswers>({});
   useEffect(() => {
     setResult(loadSoulResult());
+    setFlavorAnswers(loadFlavorAnswers());
   }, []);
+
+  const archetypeIdForPrompt = result?.bestMatch.id ?? null;
+  const promptText = useMemo(() => {
+    if (!archetypeIdForPrompt) return "";
+    const c = archetypeContent[archetypeIdForPrompt];
+    if (!c) return "";
+    return generateSoundPrompt(c.promptFoundation, flavorAnswers);
+  }, [archetypeIdForPrompt, flavorAnswers]);
 
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
