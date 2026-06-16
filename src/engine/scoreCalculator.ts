@@ -3,30 +3,70 @@
  *
  * Soul Engine — Score Calculator.
  *
- * Responsibility: take the user's raw quiz answers and the question
- * catalog, and aggregate the option weights into a multidimensional
- * ScoreProfile. This profile is the input to the nearest-neighbor
- * archetype matcher.
+ * Converts the user's raw quiz answers (A/B/C/D) into a 6-dimension
+ * ScoreProfile in the same 0–10 space the archetypes live in.
  *
- * No scoring logic is implemented yet — this file only defines the
- * function signature so the rest of the engine can be wired up
- * incrementally without breaking types.
+ * Per-answer point values:
+ *   A = 1,  B = 2,  C = 4,  D = 5
+ *
+ * The six dimensions match the archetype data file (archetypes.ts):
+ *   energy, focus, structure, risk, warmth, intensity
+ *
+ * Each dimension is fed by two questions in the quiz, so the raw
+ * dimension total ranges from 2 (both A) to 10 (both D) — already on
+ * the same 0–10 scale as the archetype vectors, no rescaling needed.
+ *
+ * This module is pure and React-free; it only depends on data/types.
  */
 
-import type { Question } from "@/types/Question";
-import type { QuizAnswers, ScoreProfile } from "@/types/QuizResult";
+import type { OptionKey } from "@/types/Question";
+import type { ArchetypeDimensions } from "@/data/archetypes";
+
+export type DimensionKey = keyof ArchetypeDimensions;
+
+export const DIMENSIONS: DimensionKey[] = [
+  "energy",
+  "focus",
+  "structure",
+  "risk",
+  "warmth",
+  "intensity",
+];
+
+/** Point value awarded by each answer option. */
+export const ANSWER_POINTS: Record<OptionKey, number> = {
+  a: 1,
+  b: 2,
+  c: 4,
+  d: 5,
+};
+
+/** A single quiz answer tagged with the dimension the question scores. */
+export interface DimensionAnswer {
+  dimension: DimensionKey;
+  option: OptionKey;
+}
 
 /**
- * Aggregate answer weights into a ScoreProfile.
+ * Aggregate per-dimension answers into a user ScoreProfile.
  *
- * @param answers  Map of questionId -> selected option key
- * @param questions  The question catalog (with option weights)
- * @returns A ScoreProfile keyed by scoring dimension
+ * Any dimension with no answers defaults to 0.
  */
 export function calculateScores(
-  _answers: QuizAnswers,
-  _questions: Question[],
-): ScoreProfile {
-  // TODO: implement in a later milestone.
-  return {};
+  answers: DimensionAnswer[],
+): ArchetypeDimensions {
+  const scores: ArchetypeDimensions = {
+    energy: 0,
+    focus: 0,
+    structure: 0,
+    risk: 0,
+    warmth: 0,
+    intensity: 0,
+  };
+
+  for (const { dimension, option } of answers) {
+    scores[dimension] += ANSWER_POINTS[option];
+  }
+
+  return scores;
 }
