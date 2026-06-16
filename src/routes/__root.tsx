@@ -84,6 +84,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Discover the music of your inner world." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Soul Sounds" },
+      { name: "twitter:description", content: "Discover the music of your inner world." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e8a97c0d-9d2a-4cf2-a47d-b238cc7b28bc/id-preview-43e08519--5b001de7-660c-4b3f-9eeb-a2a54aee1d17.lovable.app-1781642043052.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e8a97c0d-9d2a-4cf2-a47d-b238cc7b28bc/id-preview-43e08519--5b001de7-660c-4b3f-9eeb-a2a54aee1d17.lovable.app-1781642043052.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
