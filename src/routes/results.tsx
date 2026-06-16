@@ -34,14 +34,14 @@ function AudioPlaceholder() {
       </button>
 
       <div className="flex items-end gap-1.5 h-8">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {[35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30, 60].map((h, i) => (
           <div
             key={i}
             className="w-1 rounded-full bg-foreground/20 animate-wave"
             style={{
-              height: `${20 + Math.random() * 60}%`,
+              height: `${h}%`,
               animationDelay: `${i * 0.08}s`,
-              opacity: 0.3 + Math.random() * 0.4,
+              opacity: 0.3 + (i % 3) * 0.15,
             }}
           />
         ))}
