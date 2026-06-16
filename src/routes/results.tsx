@@ -254,6 +254,32 @@ function Results() {
           </div>
         </section>
 
+        {/* Section 9 — Music Prompt Preview (collapsible) */}
+        {promptText && (
+          <section
+            className="animate-reveal mt-16 sm:mt-20"
+            style={{ animationDelay: "1.25s" }}
+          >
+            <details className="group rounded-2xl border border-foreground/10 bg-foreground/[0.02] px-6 py-5 backdrop-blur-sm transition open:bg-foreground/[0.04] sm:px-8 sm:py-6">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+                <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                  Music Prompt Preview
+                </span>
+                <span className="text-foreground/40 transition group-open:rotate-180">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </summary>
+              <p className="mt-6 whitespace-pre-wrap text-sm leading-relaxed text-foreground/75 sm:text-base">
+                {promptText}
+              </p>
+            </details>
+          </section>
+        )}
+
+
+
         {/* CTAs */}
         <div
           className="animate-reveal mt-20 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
