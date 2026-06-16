@@ -3,33 +3,65 @@
  *
  * Soul Engine — Prompt Generator.
  *
- * Responsibility: turn a matched archetype plus the user's ScoreProfile
- * into a rich, descriptive prompt that a downstream music model can use
- * to compose the user's personalized Soul Sound. It combines the
- * archetype's base musical flavors with the per-dimension descriptors
- * defined in src/data/flavorMappings.ts.
+ * Combines an archetype's `promptFoundation` with the user's
+ * Questions 7–12 answers (Tempo, Instrumentation, Mood, Warmth,
+ * Atmosphere, Intensity) via the official flavor mappings, then
+ * appends the standard production rules.
  *
- * No generation logic is implemented yet — this file only defines the
- * function signature so the engine pipeline can be assembled.
+ * No music generation happens here — this only produces the
+ * natural-language prompt string.
  */
 
-import type { Archetype } from "@/types/Archetype";
-import type { ScoreProfile } from "@/types/QuizResult";
-import type { FlavorMappings } from "@/data/flavorMappings";
+import {
+  flavorMappings,
+  PRODUCTION_RULES,
+  type FlavorCategory,
+  type FlavorOption,
+} from "@/data/flavorMappings";
+
+export interface FlavorAnswers {
+  tempo?: FlavorOption;
+  instrumentation?: FlavorOption;
+  mood?: FlavorOption;
+  warmth?: FlavorOption;
+  atmosphere?: FlavorOption;
+  intensity?: FlavorOption;
+}
+
+const ORDER: FlavorCategory[] = [
+  "tempo",
+  "instrumentation",
+  "mood",
+  "warmth",
+  "atmosphere",
+  "intensity",
+];
+
+function phraseFor(category: FlavorCategory, option?: FlavorOption): string | null {
+  if (!option) return null;
+  return flavorMappings[category][option] ?? null;
+}
 
 /**
- * Build a music-composition prompt for a given archetype + profile.
+ * Build the full Soul Sounds music composition prompt.
  *
- * @param archetype  The user's matched archetype
- * @param scores  The user's aggregated score profile
- * @param flavors  Mapping tables translating scores into musical flavors
- * @returns A natural-language prompt string
+ * @param promptFoundation  The archetype's foundation sentence.
+ * @param answers           User's selected options for Q7–Q12.
  */
 export function generateSoundPrompt(
-  _archetype: Archetype,
-  _scores: ScoreProfile,
-  _flavors: FlavorMappings,
+  promptFoundation: string,
+  answers: FlavorAnswers,
 ): string {
-  // TODO: implement in a later milestone.
-  return "";
+  const phrases = ORDER
+    .map((cat) => phraseFor(cat, answers[cat]))
+    .filter((p): p is string => Boolean(p));
+
+  const foundation = promptFoundation.trim().replace(/[.!?]+$/, "");
+  const flavorSentence = phrases.length
+    ? `Compose this piece ${phrases.join(", ")}.`
+    : "";
+
+  return [foundation + ".", flavorSentence, PRODUCTION_RULES]
+    .filter(Boolean)
+    .join(" ");
 }
