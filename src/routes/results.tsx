@@ -63,19 +63,25 @@ function Results() {
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
-  const archetypeName = result?.bestMatch.displayName ?? "Your Soul Archetype";
-  const subtitle = content?.subtitle ?? "A soul waiting to be discovered.";
-  const soulIdentity = content?.soulIdentity ?? (
-    <>
-      A reflection of who you are — open-hearted, curious, attuned to the quiet
-      music inside everyday moments. Your full Soul Identity will appear here
-      once the composition is complete.
-    </>
-  );
-  const keywords = content?.soulKeywords ?? [
-    "Reflective", "Warm", "Cinematic", "Open", "Tender",
-  ];
-  const coreEmotion = content?.coreEmotion ?? "Quiet Harmony";
+  if (!result || !content) {
+    return (
+      <main className="bg-night relative min-h-screen overflow-hidden">
+        <div className="relative z-10 mx-auto max-w-2xl px-6 py-24 text-center">
+          <p className="font-display text-2xl text-foreground/80">
+            Your soul result is not ready yet.
+          </p>
+          <Link
+            to="/quiz"
+            className="btn-primary mt-8 inline-block rounded-full px-8 py-3 text-sm font-medium"
+          >
+            Take the quiz
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  const archetypeName = result.bestMatch.displayName;
 
   return (
     <main className="bg-night relative min-h-screen overflow-hidden">
@@ -108,7 +114,7 @@ function Results() {
             {archetypeName}
           </h1>
           <p className="font-display mt-5 text-xl italic text-foreground/60 sm:text-2xl">
-            {subtitle}
+            {content.subtitle}
           </p>
         </section>
 
@@ -121,7 +127,7 @@ function Results() {
             Soul Identity
           </p>
           <p className="font-display text-2xl leading-relaxed text-foreground/90 sm:text-3xl">
-            {soulIdentity}
+            {content.soulIdentity}
           </p>
         </section>
 
@@ -134,7 +140,7 @@ function Results() {
             Your Soul Keywords
           </p>
           <div className="flex flex-wrap gap-3">
-            {keywords.map((k) => (
+            {content.soulKeywords.map((k) => (
               <span
                 key={k}
                 className="rounded-full border border-foreground/10 bg-foreground/[0.03] px-4 py-1.5 text-sm text-foreground/80 backdrop-blur-sm"
@@ -154,14 +160,53 @@ function Results() {
             Core Emotion
           </p>
           <p className="font-display text-4xl text-gradient sm:text-5xl md:text-6xl">
-            {coreEmotion}
+            {content.coreEmotion}
           </p>
         </section>
 
-        {/* Section 5 — Divider + Soul Sound */}
+        {/* Section 5 — Core Purpose */}
+        <section
+          className="animate-reveal mt-24 sm:mt-32"
+          style={{ animationDelay: "0.85s" }}
+        >
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            Core Purpose
+          </p>
+          <p className="font-display text-2xl leading-relaxed text-foreground/90 sm:text-3xl">
+            {content.corePurpose}
+          </p>
+        </section>
+
+        {/* Section 6 — Emotional Journey */}
         <section
           className="animate-reveal mt-24 sm:mt-32"
           style={{ animationDelay: "0.95s" }}
+        >
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            Emotional Journey
+          </p>
+          <p className="font-display text-2xl leading-relaxed text-foreground/90 sm:text-3xl">
+            {content.emotionalJourney}
+          </p>
+        </section>
+
+        {/* Section 7 — Desired Listener Experience */}
+        <section
+          className="animate-reveal mt-24 sm:mt-32"
+          style={{ animationDelay: "1.05s" }}
+        >
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            Desired Listener Experience
+          </p>
+          <p className="font-display text-2xl leading-relaxed text-foreground/90 sm:text-3xl">
+            {content.desiredListenerExperience}
+          </p>
+        </section>
+
+        {/* Section 8 — Divider + Soul Sound */}
+        <section
+          className="animate-reveal mt-24 sm:mt-32"
+          style={{ animationDelay: "1.15s" }}
         >
           <div className="hairline mb-12" />
           <p className="mb-10 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
@@ -176,7 +221,7 @@ function Results() {
         {/* CTAs */}
         <div
           className="animate-reveal mt-20 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
-          style={{ animationDelay: "1.15s" }}
+          style={{ animationDelay: "1.35s" }}
         >
           <Link
             to="/quiz"
