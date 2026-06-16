@@ -4,17 +4,17 @@
  * Soul Engine — Score Calculator.
  *
  * Converts the user's raw quiz answers (A/B/C/D) into a 6-dimension
- * ScoreProfile in the same 0–10 space the archetypes live in.
+ * ScoreProfile in the same 1–5 space the archetypes live in.
  *
  * Per-answer point values:
  *   A = 1,  B = 2,  C = 4,  D = 5
  *
- * The six dimensions match the archetype data file (archetypes.ts):
- *   energy, focus, structure, risk, warmth, intensity
+ * The six official Soul Sounds dimensions (see archetypes.ts):
+ *   energy, focus, thinking, structure, risk, influence
  *
- * Each dimension is fed by two questions in the quiz, so the raw
- * dimension total ranges from 2 (both A) to 10 (both D) — already on
- * the same 0–10 scale as the archetype vectors, no rescaling needed.
+ * Each dimension is fed by a single question (Q1–Q6), so the raw
+ * dimension value lands on the 1–5 scale that matches the archetype
+ * vectors directly — no rescaling needed.
  *
  * This module is pure and React-free; it only depends on data/types.
  */
