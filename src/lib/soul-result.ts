@@ -7,22 +7,20 @@
  * engine, and persists the result so /results can display it.
  *
  * Notes on dimension mapping:
- *   Only Questions 1–6 feed scoring. Their categories map onto the
- *   archetype data dimensions positionally:
+ *   Only Questions 1–6 feed scoring. Their categories map directly to
+ *   the six official Soul Engine dimensions:
  *
  *     Q1 Energy    -> energy
  *     Q2 Focus     -> focus
- *     Q3 Thinking  -> warmth     (spec name "Thinking")
+ *     Q3 Thinking  -> thinking
  *     Q4 Structure -> structure
  *     Q5 Risk      -> risk
- *     Q6 Influence -> intensity  (spec name "Influence")
+ *     Q6 Influence -> influence
  *
- * Answer values:
- *   A = 1, B = 2, C = 4, D = 5
+ *   Answer values: A = 1, B = 2, C = 4, D = 5.
  *
- * The archetype vectors live on a 0–10 scale (and each archetype dim
- * is fed by two questions in the long-form spec), so single-question
- * dimension scores are doubled to land in the same 0–10 space.
+ *   Both archetype vectors and user scores live on the same 1–5 scale,
+ *   so no rescaling is required.
  */
 
 import {
@@ -41,10 +39,10 @@ const ANSWER_POINTS: Record<OptionKey, number> = { a: 1, b: 2, c: 4, d: 5 };
 const CATEGORY_TO_DIMENSION: Record<string, keyof ArchetypeDimensions> = {
   Energy: "energy",
   Focus: "focus",
-  Thinking: "warmth",
+  Thinking: "thinking",
   Structure: "structure",
   Risk: "risk",
-  Influence: "intensity",
+  Influence: "influence",
 };
 
 export interface StoredMatch {
@@ -86,10 +84,10 @@ export function buildScoreProfile(
   const profile: ArchetypeDimensions = {
     energy: 0,
     focus: 0,
+    thinking: 0,
     structure: 0,
     risk: 0,
-    warmth: 0,
-    intensity: 0,
+    influence: 0,
   };
 
   for (const [qid, option] of Object.entries(answers)) {
@@ -98,11 +96,12 @@ export function buildScoreProfile(
     if (!dim) continue; // Q7–Q12 do not feed scoring
     const points = ANSWER_POINTS[option as OptionKey];
     if (points === undefined) continue;
-    profile[dim] += points * 2; // scale 1/2/4/5 -> 2/4/8/10
+    profile[dim] += points;
   }
 
   return profile;
 }
+
 
 /** Run the engine and produce a result ready to persist. */
 export function computeSoulResult(
