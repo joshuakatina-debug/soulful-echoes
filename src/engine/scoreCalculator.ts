@@ -27,10 +27,10 @@ export type DimensionKey = keyof ArchetypeDimensions;
 export const DIMENSIONS: DimensionKey[] = [
   "energy",
   "focus",
+  "thinking",
   "structure",
   "risk",
-  "warmth",
-  "intensity",
+  "influence",
 ];
 
 /** Point value awarded by each answer option. */
@@ -58,10 +58,10 @@ export function calculateScores(
   const scores: ArchetypeDimensions = {
     energy: 0,
     focus: 0,
+    thinking: 0,
     structure: 0,
     risk: 0,
-    warmth: 0,
-    intensity: 0,
+    influence: 0,
   };
 
   for (const { dimension, option } of answers) {
@@ -70,3 +70,4 @@ export function calculateScores(
 
   return scores;
 }
+

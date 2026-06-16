@@ -10,10 +10,10 @@
  * Dimension weights (lower distance == better match):
  *   energy     × 1
  *   focus      × 2
- *   structure  × 1   (a.k.a. "Thinking" in the spec)
+ *   thinking   × 1
+ *   structure  × 1
  *   risk       × 1
- *   warmth     × 1
- *   intensity  × 2   (a.k.a. "Influence" in the spec)
+ *   influence  × 2
  *
  * The matcher reads archetype vectors from src/data/archetypes.ts —
  * no archetype-specific logic is hardcoded here.
@@ -30,11 +30,12 @@ import { DIMENSIONS, type DimensionKey } from "./scoreCalculator";
 export const DIMENSION_WEIGHTS: Record<DimensionKey, number> = {
   energy: 1,
   focus: 2,
+  thinking: 1,
   structure: 1,
   risk: 1,
-  warmth: 1,
-  intensity: 2,
+  influence: 2,
 };
+
 
 export interface ArchetypeMatch {
   archetype: ArchetypeScoring;
