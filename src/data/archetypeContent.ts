@@ -15,6 +15,7 @@
  */
 
 export interface ArchetypeContent {
+  subtitle: string;
   soulIdentity: string;
   soulKeywords: string[];
   coreEmotion: string;
@@ -26,6 +27,7 @@ export interface ArchetypeContent {
 
 export const archetypeContent: Record<string, ArchetypeContent> = {
   idealist: {
+    subtitle: "A soul guided by what could be.",
     soulIdentity: "A soul guided by what could be — moved by visions of a better world.",
     soulKeywords: ["hopeful", "principled", "visionary", "sincere", "uplifting"],
     coreEmotion: "Hope",
@@ -35,6 +37,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Warm piano, sustained strings, soft choir pads, mid tempo, hopeful major-key arc.",
   },
   activist: {
+    subtitle: "A soul moved into motion by what matters.",
     soulIdentity: "A soul that cannot look away — moved into motion by what matters.",
     soulKeywords: ["passionate", "driven", "courageous", "alive", "unflinching"],
     coreEmotion: "Conviction",
@@ -44,6 +47,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Driving percussion, layered strings, building brass, fast tempo, anthemic minor-to-major lift.",
   },
   companion: {
+    subtitle: "A soul that walks beside others.",
     soulIdentity: "A soul that walks beside others, quietly making the journey lighter.",
     soulKeywords: ["loyal", "warm", "present", "kind", "steady"],
     coreEmotion: "Belonging",
@@ -53,6 +57,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Felt piano, close strings, soft acoustic guitar, slow tempo, tender major harmonies.",
   },
   anchor: {
+    subtitle: "A soul others reach for when the ground shifts.",
     soulIdentity: "A soul others reach for when the ground feels uncertain.",
     soulKeywords: ["grounded", "calm", "dependable", "steady", "rooted"],
     coreEmotion: "Stability",
@@ -62,6 +67,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Low piano, sustained cello, soft drone, slow heartbeat tempo, rich grounding harmonies.",
   },
   champion: {
+    subtitle: "A soul unwilling to let anyone be left behind.",
     soulIdentity: "A soul forged in conviction, unwilling to let anyone be left behind.",
     soulKeywords: ["bold", "protective", "resolute", "powerful", "true"],
     coreEmotion: "Courage",
@@ -71,6 +77,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Driving low strings, taiko-like percussion, brass swells, building tempo, heroic minor key.",
   },
   achiever: {
+    subtitle: "A soul that turns vision into evidence.",
     soulIdentity: "A soul that turns vision into evidence — and keeps going.",
     soulKeywords: ["focused", "driven", "capable", "precise", "determined"],
     coreEmotion: "Mastery",
@@ -80,6 +87,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Crisp piano patterns, driving strings, subtle electronic pulse, steady tempo, modern cinematic tone.",
   },
   muse: {
+    subtitle: "A soul whose presence sparks creation.",
     soulIdentity: "A soul whose presence sparks creation in others.",
     soulKeywords: ["enchanting", "playful", "luminous", "free", "alive"],
     coreEmotion: "Delight",
@@ -89,6 +97,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Delicate piano, plucked strings, soft woodwinds, lilting tempo, airy and graceful.",
   },
   imagineer: {
+    subtitle: "A soul who sees doors where others see walls.",
     soulIdentity: "A soul who sees doors where others see walls.",
     soulKeywords: ["inventive", "curious", "playful", "visionary", "expansive"],
     coreEmotion: "Wonder",
@@ -98,6 +107,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Layered piano and synth, evolving textures, subtle electronic pulse, shifting harmonies.",
   },
   philosopher: {
+    subtitle: "A soul drawn to depth and meaning.",
     soulIdentity: "A soul that listens more than it speaks, drawn to depth and meaning.",
     soulKeywords: ["wise", "still", "considered", "discerning", "lucid"],
     coreEmotion: "Clarity",
@@ -107,6 +117,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Acoustic piano, low strings, gentle wood textures, unhurried tempo, contemplative modal harmony.",
   },
   architect: {
+    subtitle: "A soul that sees order beneath chaos.",
     soulIdentity: "A soul that sees order beneath what looks like chaos.",
     soulKeywords: ["precise", "thoughtful", "structured", "clear", "calm"],
     coreEmotion: "Composure",
@@ -116,6 +127,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Minimalist piano patterns, clean string lines, subtle electronic pulse, steady tempo, modern classical tone.",
   },
   guardian: {
+    subtitle: "A soul that protects what matters.",
     soulIdentity: "A soul that protects what matters, quietly and without applause.",
     soulKeywords: ["steady", "loyal", "grounded", "devoted", "warm"],
     coreEmotion: "Care",
@@ -125,6 +137,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Cello, warm piano, sustained strings, slow heartbeat tempo, rich and reassuring harmonies.",
   },
   confidant: {
+    subtitle: "A soul others trust with their truth.",
     soulIdentity: "A soul others trust with the truths they cannot say out loud.",
     soulKeywords: ["safe", "deep", "patient", "tender", "wise"],
     coreEmotion: "Trust",
@@ -134,6 +147,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Solo piano, close-mic'd, gentle string textures, slow tempo, tender melancholic-hopeful melody.",
   },
   pathfinder: {
+    subtitle: "A soul who finds the way forward.",
     soulIdentity: "A soul who finds the way forward when the path is unclear.",
     soulKeywords: ["intuitive", "bold", "clear", "guiding", "open"],
     coreEmotion: "Direction",
@@ -143,6 +157,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Fingerpicked guitar, warm strings, soft percussion, mid tempo, hopeful folk-cinematic tone.",
   },
   adventurer: {
+    subtitle: "A soul drawn to the open road.",
     soulIdentity: "A soul drawn to the open road and the unfamiliar horizon.",
     soulKeywords: ["free", "alive", "curious", "fearless", "expansive"],
     coreEmotion: "Aspiration",
@@ -152,6 +167,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Cinematic strings, soft percussion, expansive synth pads, driving mid tempo, panoramic mix.",
   },
   maverick: {
+    subtitle: "A soul unwilling to be made smaller.",
     soulIdentity: "A soul unwilling to be made smaller than they are.",
     soulKeywords: ["unflinching", "raw", "free", "bold", "electric"],
     coreEmotion: "Defiance",
@@ -161,6 +177,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Distorted low textures, driving percussion, dark synth pads, fast tempo, raw minor key.",
   },
   bear: {
+    subtitle: "A soul of quiet strength and warmth.",
     soulIdentity: "A soul of quiet strength — warm, steady, and unafraid to be soft.",
     soulKeywords: ["powerful", "warm", "grounded", "gentle", "protective"],
     coreEmotion: "Strength",
@@ -170,6 +187,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Low brass, warm cello, soft taiko, slow tempo, rich and reassuring major harmonies.",
   },
   dreamer: {
+    subtitle: "A soul that lives between worlds.",
     soulIdentity: "A soul that lives between worlds, sensing what is not yet visible.",
     soulKeywords: ["imaginative", "tender", "open", "yearning", "ethereal"],
     coreEmotion: "Wonder",
@@ -179,6 +197,7 @@ export const archetypeContent: Record<string, ArchetypeContent> = {
     promptFoundation: "Soft piano, airy synth pads, distant choir, slow tempo, dreamlike reverb, in a misty major key.",
   },
   peacemaker: {
+    subtitle: "A soul that brings strength through harmony.",
     soulIdentity: "A soul that softens the room simply by entering it.",
     soulKeywords: ["calm", "gentle", "harmonious", "patient", "kind"],
     coreEmotion: "Peace",
