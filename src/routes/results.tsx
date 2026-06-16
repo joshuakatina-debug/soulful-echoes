@@ -1,7 +1,33 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { loadSoulResult, type StoredSoulResult } from "@/lib/soul-result";
 import { archetypeContent } from "@/data/archetypeContent";
+import { generateSoundPrompt, type FlavorAnswers } from "@/engine/promptGenerator";
+import type { FlavorOption } from "@/data/flavorMappings";
+
+const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
+
+function loadFlavorAnswers(): FlavorAnswers {
+  try {
+    const raw = localStorage.getItem(ANSWERS_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Record<string, string>;
+    const get = (id: number) =>
+      (["a", "b", "c", "d"] as const).includes(parsed[id] as FlavorOption)
+        ? (parsed[id] as FlavorOption)
+        : undefined;
+    return {
+      tempo: get(7),
+      instrumentation: get(8),
+      mood: get(9),
+      warmth: get(10),
+      atmosphere: get(11),
+      intensity: get(12),
+    };
+  } catch {
+    return {};
+  }
+}
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -56,9 +82,19 @@ function AudioPlaceholder() {
 
 function Results() {
   const [result, setResult] = useState<StoredSoulResult | null>(null);
+  const [flavorAnswers, setFlavorAnswers] = useState<FlavorAnswers>({});
   useEffect(() => {
     setResult(loadSoulResult());
+    setFlavorAnswers(loadFlavorAnswers());
   }, []);
+
+  const archetypeIdForPrompt = result?.bestMatch.id ?? null;
+  const promptText = useMemo(() => {
+    if (!archetypeIdForPrompt) return "";
+    const c = archetypeContent[archetypeIdForPrompt];
+    if (!c) return "";
+    return generateSoundPrompt(c.promptFoundation, flavorAnswers);
+  }, [archetypeIdForPrompt, flavorAnswers]);
 
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
@@ -217,6 +253,32 @@ function Results() {
             <AudioPlaceholder />
           </div>
         </section>
+
+        {/* Section 9 — Music Prompt Preview (collapsible) */}
+        {promptText && (
+          <section
+            className="animate-reveal mt-16 sm:mt-20"
+            style={{ animationDelay: "1.25s" }}
+          >
+            <details className="group rounded-2xl border border-foreground/10 bg-foreground/[0.02] px-6 py-5 backdrop-blur-sm transition open:bg-foreground/[0.04] sm:px-8 sm:py-6">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+                <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                  Music Prompt Preview
+                </span>
+                <span className="text-foreground/40 transition group-open:rotate-180">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </summary>
+              <p className="mt-6 whitespace-pre-wrap text-sm leading-relaxed text-foreground/75 sm:text-base">
+                {promptText}
+              </p>
+            </details>
+          </section>
+        )}
+
+
 
         {/* CTAs */}
         <div
