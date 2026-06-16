@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { loadSoulResult, type StoredSoulResult } from "@/lib/soul-result";
 
 export const Route = createFileRoute("/results")({
   head: () => ({
@@ -19,6 +21,11 @@ function Section({ label, children }: { label: string; children: React.ReactNode
 }
 
 function Results() {
+  const [result, setResult] = useState<StoredSoulResult | null>(null);
+  useEffect(() => {
+    setResult(loadSoulResult());
+  }, []);
+  const archetypeName = result?.bestMatch.displayName ?? "Your Soul Archetype";
   return (
     <main className="bg-night relative min-h-screen overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
@@ -41,7 +48,7 @@ function Results() {
         <div className="animate-fade-up glass-card mt-12 rounded-3xl p-8 sm:p-12" style={{ animationDelay: "0.2s" }}>
           <div className="space-y-8">
             <Section label="Archetype Name">
-              <p className="font-display text-3xl text-foreground sm:text-4xl">The Luminous Wanderer</p>
+              <p className="font-display text-3xl text-foreground sm:text-4xl">{archetypeName}</p>
             </Section>
 
             <Section label="Soul Identity">
