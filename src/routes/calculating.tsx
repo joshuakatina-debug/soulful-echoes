@@ -1,5 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { questions } from "@/lib/quiz-data";
+import { computeSoulResult, saveSoulResult } from "@/lib/soul-result";
 
 export const Route = createFileRoute("/calculating")({
   head: () => ({
@@ -22,6 +24,19 @@ function Calculating() {
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
+    // Compute & persist the Soul result from stored quiz answers.
+    try {
+      const raw = localStorage.getItem("soul-sounds:answers");
+      const answers: Record<number, string> = raw ? JSON.parse(raw) : {};
+      const categoryLookup: Record<number, string> = Object.fromEntries(
+        questions.map((q) => [q.id, q.category]),
+      );
+      const result = computeSoulResult(answers, categoryLookup);
+      if (result) saveSoulResult(result);
+    } catch {
+      /* ignore — results page will fall back to placeholder */
+    }
+
     const i = setInterval(() => setIdx((n) => (n + 1) % MESSAGES.length), 2200);
     const t = setTimeout(() => navigate({ to: "/results" }), 8400);
     return () => {
