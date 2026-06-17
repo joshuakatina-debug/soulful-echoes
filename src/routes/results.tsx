@@ -494,11 +494,16 @@ function Results() {
             <div className="mt-16 text-center sm:mt-20">
               <button
                 type="button"
+                onClick={() => {
+                  const el = document.getElementById("soul-sound-section");
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
                 className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
               >
                 Continue Discovering
               </button>
             </div>
+
           </section>
         </div>
       </div>
