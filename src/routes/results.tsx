@@ -445,12 +445,10 @@ function Results() {
                 <div>lastAudioUrl: {debug.lastAudioUrl ?? "—"}</div>
                 <div>audioUrl truthy: {debug.lastAudioUrl ? "true" : "false"}</div>
                 <div>field read as: "audioUrl" (exact)</div>
-                <details className="mt-2">
-                  <summary className="cursor-pointer text-foreground/50">lastResponse JSON</summary>
-                  <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all">
-{JSON.stringify(debug.lastResponse, null, 2)}
-                  </pre>
-                </details>
+                <div className="mt-2 text-foreground/50">lastResponse JSON:</div>
+                <pre className="mt-1 max-h-96 overflow-auto whitespace-pre-wrap break-all rounded bg-black/40 p-2 text-foreground/80">
+{debug.lastResponse === null ? "(none yet)" : JSON.stringify(debug.lastResponse, null, 2)}
+                </pre>
               </div>
             )}
           </div>
