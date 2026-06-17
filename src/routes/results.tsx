@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
 const POLL_INTERVAL_MS = 15_000;
-const POLL_TIMEOUT_MS = 2 * 60_000;
+const POLL_TIMEOUT_MS = 5 * 60_000;
 
 type SoundStatus =
   | { kind: "idle" }
