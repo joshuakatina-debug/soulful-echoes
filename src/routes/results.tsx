@@ -104,9 +104,20 @@ function AudioPlaceholder() {
 function Results() {
   const [result, setResult] = useState<StoredSoulResult | null>(null);
   const [flavorAnswers, setFlavorAnswers] = useState<FlavorAnswers>({});
+  const [sound, setSound] = useState<SoundStatus>({ kind: "idle" });
+  const pollTimerRef = useRef<number | null>(null);
+  const timeoutTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
+      if (timeoutTimerRef.current) window.clearTimeout(timeoutTimerRef.current);
+    };
   }, []);
 
   const archetypeIdForPrompt = result?.bestMatch.id ?? null;
