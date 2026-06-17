@@ -66,13 +66,21 @@ function Results() {
   const [flavorAnswers, setFlavorAnswers] = useState<FlavorAnswers>({});
   const [sound, setSound] = useState<SoundStatus>({ kind: "idle" });
   const [phase, setPhase] = useState(0);
+  const [resultReady, setResultReady] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
+
 
   useEffect(() => {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
+    const t = setTimeout(() => setResultReady(true), 250);
+    return () => clearTimeout(t);
   }, []);
+
 
   useEffect(() => {
     return () => {
@@ -126,6 +134,46 @@ function Results() {
     }
   }
 
+  function handleEnded() {
+    setIsPlaying(false);
+  }
+
+  function togglePlay() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused || audio.ended) {
+      void audio.play();
+    } else {
+      audio.pause();
+    }
+  }
+
+  async function handleDownload() {
+    if (sound.kind !== "ready") return;
+    if (downloadMode === "open") {
+      window.open(sound.audioUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    try {
+      const response = await fetch(sound.audioUrl, { mode: "cors" });
+      if (!response.ok) throw new Error("Network response was not ok");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `soul-sound-${archetypeName.toLowerCase().replace(/\s+/g, "-")}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Download failed, falling back to open in new tab", e);
+      setDownloadMode("open");
+      window.open(sound.audioUrl, "_blank", "noopener,noreferrer");
+    }
+  }
+
+
   async function pollOnce(taskId: string) {
     try {
       const { data, error } = await supabase.functions.invoke("check-soul-sound-status", {
@@ -161,7 +209,9 @@ function Results() {
 
   async function handleGenerate() {
     if (!promptText) return;
+    setDownloadMode("download");
     setSound({ kind: "loading" });
+
 
     try {
       console.log(`Short MusicAPI prompt length: ${shortPrompt.length}`);
