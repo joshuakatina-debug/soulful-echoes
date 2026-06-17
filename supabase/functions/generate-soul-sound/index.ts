@@ -66,12 +66,14 @@ Deno.serve(async (req: Request) => {
 
     const data = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
-      console.error("MusicAPI create failed", upstream.status, data);
+      console.error("MusicAPI create failed", upstream.status, JSON.stringify(data));
       return new Response(
-        JSON.stringify({ error: "Failed to start music generation", detail: data }),
+        JSON.stringify({ error: "Failed to start music generation" }),
         { status: 502, headers: corsHeaders },
       );
     }
+
+    console.log("[create] full response:", JSON.stringify(data));
 
     // MusicAPI may return task_id at top level or nested under data
     const taskId =
@@ -81,10 +83,12 @@ Deno.serve(async (req: Request) => {
       data?.data?.id ??
       null;
 
+    console.log(`[create] task_id=${taskId}`);
+
     if (!taskId) {
-      console.error("MusicAPI response missing task_id", data);
+      console.error("MusicAPI response missing task_id", JSON.stringify(data));
       return new Response(
-        JSON.stringify({ error: "No task_id returned by music service", raw: data }),
+        JSON.stringify({ error: "No task_id returned by music service" }),
         { status: 502, headers: corsHeaders },
       );
     }
