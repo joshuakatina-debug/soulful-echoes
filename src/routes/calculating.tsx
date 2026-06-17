@@ -15,6 +15,7 @@ export const Route = createFileRoute("/calculating")({
 function Calculating() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
     // Compute & persist the Soul result from stored quiz answers.
@@ -35,8 +36,13 @@ function Calculating() {
     return () => clearTimeout(t);
   }, []);
 
+  function handleReveal() {
+    setLeaving(true);
+    setTimeout(() => navigate({ to: "/results" }), 600);
+  }
+
   return (
-    <main className="bg-night relative flex min-h-screen items-center justify-center overflow-hidden px-6">
+    <main className={`bg-night relative flex min-h-screen items-center justify-center overflow-hidden px-6 transition-opacity duration-[600ms] ease-out ${leaving ? "opacity-0" : "opacity-100"}`}>
       {/* Warm ambient glow — two soft, slow-moving orbs */}
       <div className="pointer-events-none absolute inset-0">
         <div
@@ -85,7 +91,7 @@ function Calculating() {
         >
           <button
             type="button"
-            onClick={() => navigate({ to: "/results" })}
+            onClick={handleReveal}
             className="btn-primary inline-flex items-center gap-3 rounded-full px-10 py-4 text-sm font-medium tracking-wide"
           >
             Reveal My Archetype
