@@ -92,7 +92,7 @@ export function generateShortMusicPrompt(params: {
     .map(shortPhrase);
 
   const MAX = 350;
-  const ENDING = "Natural ending. No abrupt cutoff.";
+  const ENDING = "Compose as a complete short piece with a clear beginning, middle, and resolved ending. Do not fade or cut off abruptly.";
 
   // Strip overused generic/corporate language.
   const BANNED = /\b(cinematic|polished|corporate|inspirational|anthemic|motivational)\b/gi;
