@@ -362,7 +362,82 @@ function Results() {
           </p>
 
           <div className="glass-card-warm rounded-3xl px-8 py-12 sm:px-12 sm:py-16">
-            <AudioPlaceholder />
+            {sound.kind === "idle" && (
+              <div className="flex flex-col items-center gap-6 text-center">
+                <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                  Generate the instrumental composition shaped by your soul.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  disabled={!promptText}
+                  className="btn-primary rounded-full px-8 py-3 text-sm font-medium disabled:opacity-50"
+                >
+                  Generate My Soul Sound
+                </button>
+              </div>
+            )}
+
+            {sound.kind === "loading" && (
+              <div className="flex flex-col items-center gap-6 text-center">
+                <div className="flex items-end gap-1.5 h-8">
+                  {[35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30, 60].map((h, i) => (
+                    <div
+                      key={i}
+                      className="w-1 rounded-full bg-foreground/30 animate-wave"
+                      style={{
+                        height: `${h}%`,
+                        animationDelay: `${i * 0.08}s`,
+                        opacity: 0.3 + (i % 3) * 0.15,
+                      }}
+                    />
+                  ))}
+                </div>
+                <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                  Composing your Soul Sound. This usually takes 30–90 seconds.
+                </p>
+              </div>
+            )}
+
+            {sound.kind === "ready" && (
+              <div className="flex flex-col items-center gap-6">
+                {sound.imageUrl && (
+                  <img
+                    src={sound.imageUrl}
+                    alt="Soul Sound cover"
+                    className="h-32 w-32 rounded-2xl object-cover shadow-lg"
+                  />
+                )}
+                <audio
+                  controls
+                  src={sound.audioUrl}
+                  className="w-full max-w-md"
+                  preload="metadata"
+                >
+                  Your browser does not support the audio element.
+                </audio>
+                {sound.duration ? (
+                  <p className="text-xs text-muted-foreground">
+                    {Math.round(sound.duration)}s
+                  </p>
+                ) : null}
+              </div>
+            )}
+
+            {sound.kind === "error" && (
+              <div className="flex flex-col items-center gap-6 text-center">
+                <p className="max-w-sm text-sm leading-relaxed text-foreground/80">
+                  {sound.message}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
