@@ -432,6 +432,27 @@ function Results() {
                 </button>
               </div>
             )}
+
+            {/* TEMP: Developer Debug Panel */}
+            {sound.kind !== "idle" && (
+              <div className="mt-8 rounded-xl border border-foreground/10 bg-black/40 p-4 text-left font-mono text-[11px] leading-relaxed text-foreground/70">
+                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-foreground/50">
+                  Developer Debug Panel
+                </p>
+                <div>taskId: {debug.taskId ?? "—"}</div>
+                <div>attempts: {debug.attempts}</div>
+                <div>lastStatus: {debug.lastStatus ?? "—"}</div>
+                <div>lastAudioUrl: {debug.lastAudioUrl ?? "—"}</div>
+                <div>audioUrl truthy: {debug.lastAudioUrl ? "true" : "false"}</div>
+                <div>field read as: "audioUrl" (exact)</div>
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-foreground/50">lastResponse JSON</summary>
+                  <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all">
+{JSON.stringify(debug.lastResponse, null, 2)}
+                  </pre>
+                </details>
+              </div>
+            )}
           </div>
         </section>
 
