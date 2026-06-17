@@ -423,7 +423,49 @@ function Results() {
               </div>
             </div>
 
-            <div className="mt-16 sm:mt-20 grid gap-5 sm:grid-cols-2">
+            {/* Soul Sound — centerpiece */}
+            <article className="group relative mt-16 overflow-hidden rounded-3xl border border-foreground/[0.10] bg-foreground/[0.03] p-8 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.16] hover:bg-foreground/[0.05] sm:mt-20 sm:p-12">
+              <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.08] blur-3xl" />
+              <div className="pointer-events-none absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.08] blur-3xl" />
+
+              <div className="relative text-center">
+                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                  At the heart of it
+                </p>
+                <h3 className="font-display mt-4 text-3xl text-foreground sm:text-4xl md:text-5xl">
+                  Your Soul Sound
+                </h3>
+                <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+                  The music that reflects the rhythm, feeling, and movement of your inner world.
+                </p>
+              </div>
+
+              <div className="relative mt-10 flex flex-col items-center gap-6 sm:flex-row sm:gap-8">
+                <div className="h-28 w-28 shrink-0 rounded-3xl bg-gradient-to-br from-[oklch(0.82_0.13_85/0.25)] via-foreground/[0.06] to-[oklch(0.55_0.18_305/0.20)] blur-[3px] sm:h-32 sm:w-32" />
+                <div className="min-w-0 flex-1 w-full">
+                  <div className="flex h-14 items-end gap-1.5 blur-[1.5px]">
+                    {[
+                      30, 55, 25, 70, 45, 80, 35, 60, 40, 75, 50, 30, 65, 45, 85, 55, 40, 70, 30,
+                      60, 45, 75, 35, 55,
+                    ].map((h, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 rounded-full bg-foreground/25"
+                        style={{ height: `${h}%`, opacity: 0.35 + (i % 3) * 0.15 }}
+                      />
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs italic text-foreground/55">Waiting for you</p>
+                </div>
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-foreground/25 text-foreground/50 transition duration-500 group-hover:border-foreground/40 group-hover:text-foreground/70">
+                  <svg className="ml-1 h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+            </article>
+
+            <div className="mt-5 grid gap-5 sm:grid-cols-2">
               {/* Emotional Blueprint */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
                 <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
@@ -469,40 +511,6 @@ function Results() {
               </article>
             </div>
 
-            {/* Soul Sound */}
-
-            <article className="group relative mt-5 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-              <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
-              <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
-                Soul Sound
-              </h3>
-              <div className="relative mt-5 flex items-center gap-5">
-                <div className="h-20 w-20 shrink-0 rounded-2xl bg-gradient-to-br from-foreground/[0.10] via-foreground/[0.05] to-foreground/[0.02] blur-[2px]" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex h-10 items-end gap-1 blur-[1px]">
-                    {[
-                      35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30,
-                      60,
-                    ].map((h, i) => (
-                      <div
-                        key={i}
-                        className="w-1.5 rounded-full bg-foreground/20"
-                        style={{ height: `${h}%`, opacity: 0.3 + (i % 3) * 0.15 }}
-                      />
-                    ))}
-                  </div>
-                  <p className="mt-2 text-xs text-foreground/50">Your Soul Sound</p>
-                </div>
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-foreground/20 text-foreground/40 opacity-70 transition duration-500 group-hover:opacity-100">
-                  <svg className="ml-0.5 h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-              </div>
-              <p className="relative mt-4 text-sm leading-relaxed text-foreground/70">
-                An original piece of music inspired by the rhythm of your journey.
-              </p>
-            </article>
 
             <div className="mt-16 text-center sm:mt-20">
               <button
