@@ -9,12 +9,8 @@ const corsHeaders = {
   "Content-Type": "application/json",
 };
 
-function pickFirst<T>(...values: Array<T | undefined | null>): T | null {
-  for (const v of values) {
-    if (v !== undefined && v !== null && v !== "") return v;
-  }
-  return null;
-}
+
+
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
