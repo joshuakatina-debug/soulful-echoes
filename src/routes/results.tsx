@@ -461,10 +461,11 @@ function Results() {
 
             {/* Soul Sound */}
             <article className="group relative mt-5 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-              <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+              <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+              <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                 Soul Sound
               </h3>
-              <div className="mt-5 flex items-center gap-5">
+              <div className="relative mt-5 flex items-center gap-5">
                 <div className="h-20 w-20 shrink-0 rounded-2xl bg-gradient-to-br from-foreground/[0.10] via-foreground/[0.05] to-foreground/[0.02] blur-[2px]" />
                 <div className="min-w-0 flex-1">
                   <div className="flex h-10 items-end gap-1 blur-[1px]">
@@ -476,7 +477,7 @@ function Results() {
                       />
                     ))}
                   </div>
-                  <p className="mt-2 text-xs text-foreground/40 blur-[0.5px]">Your Soul Sound</p>
+                  <p className="mt-2 text-xs text-foreground/50">Your Soul Sound</p>
                 </div>
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-foreground/20 text-foreground/40 opacity-70 transition duration-500 group-hover:opacity-100">
                   <svg className="ml-0.5 h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -484,10 +485,11 @@ function Results() {
                   </svg>
                 </div>
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+              <p className="relative mt-4 text-sm leading-relaxed text-foreground/70">
                 An original piece of music inspired by the rhythm of your journey.
               </p>
             </article>
+
 
             <div className="mt-16 text-center sm:mt-20">
               <button
