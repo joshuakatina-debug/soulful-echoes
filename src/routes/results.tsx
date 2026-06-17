@@ -2,7 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { loadSoulResult, type StoredSoulResult } from "@/lib/soul-result";
 import { archetypeContent } from "@/data/archetypeContent";
-import { generateSoundPrompt, generateShortMusicPrompt, type FlavorAnswers } from "@/engine/promptGenerator";
+import {
+  generateSoundPrompt,
+  generateShortMusicPrompt,
+  type FlavorAnswers,
+} from "@/engine/promptGenerator";
 import type { FlavorOption } from "@/data/flavorMappings";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -19,13 +23,21 @@ type SoundStatus =
 function isSuccess(s?: string | null) {
   if (!s) return false;
   const v = s.toLowerCase();
-  return v === "complete" || v === "completed" || v === "success" || v === "succeeded" || v === "finished";
+  return (
+    v === "complete" ||
+    v === "completed" ||
+    v === "success" ||
+    v === "succeeded" ||
+    v === "finished"
+  );
 }
 
 function isFailure(s?: string | null) {
   if (!s) return false;
   const v = s.toLowerCase();
-  return v === "failed" || v === "error" || v === "rejected" || v === "cancelled" || v === "canceled";
+  return (
+    v === "failed" || v === "error" || v === "rejected" || v === "cancelled" || v === "canceled"
+  );
 }
 
 function loadFlavorAnswers(): FlavorAnswers {
@@ -83,7 +95,6 @@ function Results() {
 
   useEffect(() => {
     return () => {
-
       if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
       if (timeoutTimerRef.current) window.clearTimeout(timeoutTimerRef.current);
     };
@@ -175,7 +186,6 @@ function Results() {
 
   async function pollOnce(taskId: string) {
     try {
-
       const { data, error } = await supabase.functions.invoke("check-soul-sound-status", {
         body: { task_id: taskId },
       });
@@ -213,7 +223,6 @@ function Results() {
     setSound({ kind: "loading" });
 
     try {
-
       console.log(`Short MusicAPI prompt length: ${shortPrompt.length}`);
       const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
         body: { promptText, shortPrompt },
@@ -235,7 +244,10 @@ function Results() {
         setSound((prev) =>
           prev.kind === "ready"
             ? prev
-            : { kind: "error", message: "Your Soul Sound needs a little more time. Please try again." },
+            : {
+                kind: "error",
+                message: "Your Soul Sound needs a little more time. Please try again.",
+              },
         );
       }, POLL_TIMEOUT_MS);
     } catch (e) {
@@ -283,7 +295,6 @@ function Results() {
   }
 
   const archetypeName = result.bestMatch.displayName;
-
 
   return (
     <main className="bg-night relative min-h-screen overflow-hidden">
@@ -469,7 +480,10 @@ function Results() {
                 <div className="h-20 w-20 shrink-0 rounded-2xl bg-gradient-to-br from-foreground/[0.10] via-foreground/[0.05] to-foreground/[0.02] blur-[2px]" />
                 <div className="min-w-0 flex-1">
                   <div className="flex h-10 items-end gap-1 blur-[1px]">
-                    {[35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30, 60].map((h, i) => (
+                    {[
+                      35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30,
+                      60,
+                    ].map((h, i) => (
                       <div
                         key={i}
                         className="w-1.5 rounded-full bg-foreground/20"
@@ -491,7 +505,6 @@ function Results() {
             </article>
 
             <div className="mt-16 text-center sm:mt-20">
-
               <button
                 type="button"
                 onClick={() => {
@@ -503,7 +516,6 @@ function Results() {
                 Continue Discovering
               </button>
             </div>
-
           </section>
 
           {/* === SOUL SOUND (TESTING) === */}
@@ -540,7 +552,9 @@ function Results() {
                     <div className="absolute inset-0 rounded-full border-2 border-foreground/10" />
                     <div className="absolute inset-0 rounded-full border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin" />
                   </div>
-                  <p className="mt-6 text-sm text-muted-foreground">Composing your original Soul Sound...</p>
+                  <p className="mt-6 text-sm text-muted-foreground">
+                    Composing your original Soul Sound...
+                  </p>
                 </div>
               )}
 
@@ -577,9 +591,13 @@ function Results() {
                       )}
                     </button>
                     <div className="min-w-0 flex-1 text-center sm:text-left">
-                      <p className="font-display text-lg text-foreground">{archetypeName} — Soul Sound</p>
+                      <p className="font-display text-lg text-foreground">
+                        {archetypeName} — Soul Sound
+                      </p>
                       <p className="text-sm text-foreground/60">
-                        {sound.duration ? `${Math.round(sound.duration)} seconds` : "An original composition inspired by your archetype"}
+                        {sound.duration
+                          ? `${Math.round(sound.duration)} seconds`
+                          : "An original composition inspired by your archetype"}
                       </p>
                     </div>
                     <div className="shrink-0">
@@ -588,7 +606,9 @@ function Results() {
                         onClick={handleDownload}
                         className="btn-ghost rounded-full px-6 py-2 text-sm font-medium"
                       >
-                        {downloadMode === "open" ? "Open / Download Soul Sound" : "Download Soul Sound"}
+                        {downloadMode === "open"
+                          ? "Open / Download Soul Sound"
+                          : "Download Soul Sound"}
                       </button>
                     </div>
                   </div>
@@ -613,7 +633,6 @@ function Results() {
             </div>
           </section>
         </div>
-
       </div>
     </main>
   );
