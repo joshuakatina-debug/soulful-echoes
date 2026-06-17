@@ -68,13 +68,7 @@ function Results() {
   const [sound, setSound] = useState<SoundStatus>({ kind: "idle" });
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
-  const [debug, setDebug] = useState<{
-    taskId: string | null;
-    attempts: number;
-    lastResponse: unknown;
-    lastStatus: string | null;
-    lastAudioUrl: string | null;
-  }>({ taskId: null, attempts: 0, lastResponse: null, lastStatus: null, lastAudioUrl: null });
+  
 
   useEffect(() => {
     setResult(loadSoulResult());
@@ -126,20 +120,11 @@ function Results() {
       });
       if (error) {
         console.error("status invoke error", error);
-        setDebug((d) => ({ ...d, attempts: d.attempts + 1, lastResponse: { error: String(error) } }));
         return;
       }
-      console.log("[poll] response", data);
       const status = (data?.status as string | undefined) ?? null;
       const audioUrl = (data?.audioUrl as string | undefined) ?? null;
-      setDebug((d) => ({
-        ...d,
-        attempts: d.attempts + 1,
-        lastResponse: data,
-        lastStatus: status,
-        lastAudioUrl: audioUrl,
-      }));
-      // Stop polling immediately once audioUrl exists.
+      // Stop polling immediately once audioUrl exists (even if state is still "running").
       if (audioUrl) {
         stopPolling();
         setSound({
@@ -166,7 +151,7 @@ function Results() {
   async function handleGenerate() {
     if (!promptText) return;
     setSound({ kind: "loading" });
-    setDebug({ taskId: null, attempts: 0, lastResponse: null, lastStatus: null, lastAudioUrl: null });
+    
     try {
       console.log(`Short MusicAPI prompt length: ${shortPrompt.length}`);
       const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
@@ -181,7 +166,7 @@ function Results() {
         return;
       }
       const taskId: string = data.task_id;
-      setDebug((d) => ({ ...d, taskId }));
+      
       // Kick off polling immediately, then every 15s.
       void pollOnce(taskId);
       pollTimerRef.current = window.setInterval(() => pollOnce(taskId), POLL_INTERVAL_MS);
@@ -407,6 +392,8 @@ function Results() {
                   src={sound.audioUrl}
                   className="w-full max-w-md"
                   preload="metadata"
+                  autoPlay={false}
+                  loop={false}
                 >
                   Your browser does not support the audio element.
                 </audio>
@@ -415,6 +402,15 @@ function Results() {
                     {Math.round(sound.duration)}s
                   </p>
                 ) : null}
+                <a
+                  href={sound.audioUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
+                >
+                  Download Soul Sound
+                </a>
               </div>
             )}
 
@@ -430,25 +426,6 @@ function Results() {
                 >
                   Try again
                 </button>
-              </div>
-            )}
-
-            {/* TEMP: Developer Debug Panel */}
-            {sound.kind !== "idle" && (
-              <div className="mt-8 rounded-xl border border-foreground/10 bg-black/40 p-4 text-left font-mono text-[11px] leading-relaxed text-foreground/70">
-                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-foreground/50">
-                  Developer Debug Panel
-                </p>
-                <div>taskId: {debug.taskId ?? "—"}</div>
-                <div>attempts: {debug.attempts}</div>
-                <div>lastStatus: {debug.lastStatus ?? "—"}</div>
-                <div>lastAudioUrl: {debug.lastAudioUrl ?? "—"}</div>
-                <div>audioUrl truthy: {debug.lastAudioUrl ? "true" : "false"}</div>
-                <div>field read as: "audioUrl" (exact)</div>
-                <div className="mt-2 text-foreground/50">lastResponse JSON:</div>
-                <pre className="mt-1 max-h-96 overflow-auto whitespace-pre-wrap break-all rounded bg-black/40 p-2 text-foreground/80">
-{debug.lastResponse === null ? "(none yet)" : JSON.stringify(debug.lastResponse, null, 2)}
-                </pre>
               </div>
             )}
           </div>
