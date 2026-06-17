@@ -68,6 +68,13 @@ function Results() {
   const [sound, setSound] = useState<SoundStatus>({ kind: "idle" });
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
+  const [debug, setDebug] = useState<{
+    taskId: string | null;
+    attempts: number;
+    lastResponse: unknown;
+    lastStatus: string | null;
+    lastAudioUrl: string | null;
+  }>({ taskId: null, attempts: 0, lastResponse: null, lastStatus: null, lastAudioUrl: null });
 
   useEffect(() => {
     setResult(loadSoulResult());
