@@ -58,57 +58,83 @@ Deno.serve(async (req: Request) => {
 
     const data = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
-      console.error("MusicAPI status failed", upstream.status, data);
+      console.error("MusicAPI status failed", upstream.status, JSON.stringify(data));
       return new Response(
-        JSON.stringify({ error: "Failed to fetch task status", detail: data }),
+        JSON.stringify({ error: "Failed to fetch task status" }),
         { status: 502, headers: corsHeaders },
       );
     }
 
+    console.log(`[status] task_id=${task_id} full response:`, JSON.stringify(data));
+
     // Normalize across possible MusicAPI response shapes
     const root = data?.data ?? data;
-    const clips: any[] = Array.isArray(root?.clips)
-      ? root.clips
-      : Array.isArray(root?.data?.clips)
-        ? root.data.clips
-        : [];
+    const output = root?.output ?? root?.result ?? {};
+    const clipsCandidate =
+      root?.clips ??
+      root?.data?.clips ??
+      output?.clips ??
+      output?.songs ??
+      output?.tracks ??
+      root?.songs ??
+      root?.tracks ??
+      [];
+    const clips: any[] = Array.isArray(clipsCandidate) ? clipsCandidate : [];
     const firstClip = clips[0] ?? {};
 
     const status = pickFirst<string>(
       root?.status,
       root?.state,
+      output?.status,
+      output?.state,
       firstClip?.status,
       firstClip?.state,
     );
 
+    const progress = pickFirst<number>(
+      root?.progress,
+      output?.progress,
+      firstClip?.progress,
+    );
+
     const audio_url = pickFirst<string>(
       root?.audio_url,
+      output?.audio_url,
       firstClip?.audio_url,
-      root?.audio,
       firstClip?.audio,
+      root?.audio,
+      output?.audio,
+      firstClip?.url,
+      output?.url,
     );
 
     const image_url = pickFirst<string>(
       root?.image_url,
+      output?.image_url,
       firstClip?.image_url,
-      root?.image,
       firstClip?.image,
+      root?.image,
     );
 
     const duration = pickFirst<number>(
       root?.duration,
+      output?.duration,
       firstClip?.duration,
       firstClip?.metadata?.duration,
+    );
+
+    console.log(
+      `[status] task_id=${task_id} status=${status} progress=${progress} audio_url=${audio_url ? "yes" : "no"} clips=${clips.length}`,
     );
 
     return new Response(
       JSON.stringify({
         task_id,
         status,
+        progress,
         audio_url,
         image_url,
         duration,
-        raw: data,
       }),
       { status: 200, headers: corsHeaders },
     );
