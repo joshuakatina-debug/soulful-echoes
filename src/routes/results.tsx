@@ -415,44 +415,49 @@ function Results() {
             <div className="mt-16 sm:mt-20 grid gap-5 sm:grid-cols-2">
               {/* Emotional Blueprint */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
+                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                   Emotional Blueprint
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
                   A deeper understanding of the emotional patterns that shape your life.
                 </p>
               </article>
 
               {/* Creative Nature */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                   Creative Nature
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
                   The ways you naturally create, imagine, and bring beauty into the world.
                 </p>
               </article>
 
               {/* Relationships */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
+                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                   Relationships
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
                   How you naturally build trust, offer care, and connect with others.
                 </p>
               </article>
 
               {/* Growth */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                   Growth
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
                   The places where your greatest transformation often begins.
                 </p>
               </article>
             </div>
+
 
             {/* Soul Sound */}
             <article className="group relative mt-5 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
