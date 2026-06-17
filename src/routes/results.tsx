@@ -392,6 +392,8 @@ function Results() {
                   src={sound.audioUrl}
                   className="w-full max-w-md"
                   preload="metadata"
+                  autoPlay={false}
+                  loop={false}
                 >
                   Your browser does not support the audio element.
                 </audio>
@@ -400,6 +402,15 @@ function Results() {
                     {Math.round(sound.duration)}s
                   </p>
                 ) : null}
+                <a
+                  href={sound.audioUrl}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
+                >
+                  Download Soul Sound
+                </a>
               </div>
             )}
 
@@ -415,25 +426,6 @@ function Results() {
                 >
                   Try again
                 </button>
-              </div>
-            )}
-
-            {/* TEMP: Developer Debug Panel */}
-            {sound.kind !== "idle" && (
-              <div className="mt-8 rounded-xl border border-foreground/10 bg-black/40 p-4 text-left font-mono text-[11px] leading-relaxed text-foreground/70">
-                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-foreground/50">
-                  Developer Debug Panel
-                </p>
-                <div>taskId: {debug.taskId ?? "—"}</div>
-                <div>attempts: {debug.attempts}</div>
-                <div>lastStatus: {debug.lastStatus ?? "—"}</div>
-                <div>lastAudioUrl: {debug.lastAudioUrl ?? "—"}</div>
-                <div>audioUrl truthy: {debug.lastAudioUrl ? "true" : "false"}</div>
-                <div>field read as: "audioUrl" (exact)</div>
-                <div className="mt-2 text-foreground/50">lastResponse JSON:</div>
-                <pre className="mt-1 max-h-96 overflow-auto whitespace-pre-wrap break-all rounded bg-black/40 p-2 text-foreground/80">
-{debug.lastResponse === null ? "(none yet)" : JSON.stringify(debug.lastResponse, null, 2)}
-                </pre>
               </div>
             )}
           </div>
