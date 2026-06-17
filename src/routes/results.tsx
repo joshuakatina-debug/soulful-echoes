@@ -329,7 +329,7 @@ function Results() {
           </p>
         </div>
 
-{/* === THERE'S MORE TO DISCOVER === */}
+        {/* === THERE'S MORE TO DISCOVER === */}
         <div
           className={`transition-all duration-1000 ease-out ${
             phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
