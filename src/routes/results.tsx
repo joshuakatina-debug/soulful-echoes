@@ -166,7 +166,7 @@ function Results() {
         return;
       }
       const taskId: string = data.task_id;
-      setDebug((d) => ({ ...d, taskId }));
+      
       // Kick off polling immediately, then every 15s.
       void pollOnce(taskId);
       pollTimerRef.current = window.setInterval(() => pollOnce(taskId), POLL_INTERVAL_MS);
