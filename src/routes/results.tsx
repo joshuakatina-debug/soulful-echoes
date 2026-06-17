@@ -81,8 +81,8 @@ function Results() {
     return () => clearTimeout(t);
   }, []);
 
-
   useEffect(() => {
+
     return () => {
       if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
       if (timeoutTimerRef.current) window.clearTimeout(timeoutTimerRef.current);
