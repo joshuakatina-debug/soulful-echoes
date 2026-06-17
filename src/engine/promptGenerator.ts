@@ -92,33 +92,51 @@ export function generateShortMusicPrompt(params: {
     .map(shortPhrase);
 
   const MAX = 350;
+  const ENDING = "Natural ending. No abrupt cutoff.";
+
+  // Strip overused generic/corporate language.
+  const BANNED = /\b(cinematic|polished|corporate|inspirational|anthemic|motivational)\b/gi;
+
+  const labeledStyles = ORDER
+    .map((cat) => {
+      const raw = phraseFor(cat, answers[cat]);
+      if (!raw) return null;
+      const cleaned = raw.replace(BANNED, "").replace(/\s+/g, " ").trim();
+      const short = shortPhrase(cleaned);
+      return short || null;
+    })
+    .filter((s): s is string => Boolean(s));
+
+  const cleanedKeywords = soulKeywords
+    .map((k) => k.replace(BANNED, "").trim())
+    .filter((k) => k.length > 0);
 
   const build = (keywords: string[], styles: string[]) => {
-    const kw = keywords.join(", ");
-    const st = styles.join(", ");
-    const styleSegment = st ? ` Style: ${st}.` : "";
+    const kwTop = keywords.slice(0, 3).join(", ");
+    const character = kwTop ? ` Character: ${kwTop}.` : "";
+    const sound = styles.length ? ` Sound: ${styles.join(", ")}.` : "";
     return (
-      `Instrumental, no vocals. ${archetypeName}. ` +
-      `Core emotion: ${coreEmotion}. ` +
-      `Feel: ${kw}.${styleSegment} ` +
-      `Cinematic, emotional, polished.`
+      `Instrumental, no vocals. A personal soul theme for ${archetypeName}. ` +
+      `Core feeling: ${coreEmotion}.${character}${sound} ` +
+      `Intimate, human, emotionally specific. ${ENDING}`
     );
   };
 
-  let keywords = soulKeywords.slice(0, 5);
-  let styles = stylePhrases.slice();
+  let keywords = cleanedKeywords.slice(0, 3);
+  let styles = labeledStyles.slice();
   let prompt = build(keywords, styles);
 
-  // Drop style phrases from the end until under the limit.
   while (prompt.length > MAX && styles.length > 0) {
     styles.pop();
     prompt = build(keywords, styles);
   }
-  // Then drop keywords from the end.
   while (prompt.length > MAX && keywords.length > 1) {
     keywords.pop();
     prompt = build(keywords, styles);
   }
+
+  // Silence unused-var lint for stylePhrases (kept for backwards compat).
+  void stylePhrases;
 
   return prompt;
 }
