@@ -73,8 +73,8 @@ function Results() {
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
 
-
   useEffect(() => {
+
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
     const t = setTimeout(() => setResultReady(true), 250);
