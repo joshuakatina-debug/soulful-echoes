@@ -65,3 +65,28 @@ export function generateSoundPrompt(
     .filter(Boolean)
     .join(" ");
 }
+
+/**
+ * Build a SHORT music prompt (<400 chars) for MusicAPI's
+ * gpt_description_prompt field. Truncates safely to 390 chars.
+ */
+export function generateShortMusicPrompt(params: {
+  archetypeName: string;
+  coreEmotion: string;
+  soulKeywords: string[];
+  answers: FlavorAnswers;
+}): string {
+  const { archetypeName, coreEmotion, soulKeywords, answers } = params;
+  const phrases = ORDER
+    .map((cat) => phraseFor(cat, answers[cat]))
+    .filter((p): p is string => Boolean(p));
+
+  const keywords = soulKeywords.join(", ");
+  const style = phrases.join(", ");
+  const prompt =
+    `Instrumental only. No vocals. Create a ${coreEmotion} piece for ${archetypeName}. ` +
+    `It should feel ${keywords}. Musical style: ${style}. ` +
+    `Cinematic, emotional, high quality.`;
+
+  return prompt.length > 390 ? prompt.slice(0, 390) : prompt;
+}

@@ -1,6 +1,9 @@
 interface GenerateRequest {
   promptText: string;
+  shortPrompt?: string;
 }
+
+const MAX_PROMPT_LEN = 390;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,13 +25,20 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const { promptText } = (await req.json()) as GenerateRequest;
-    if (!promptText || typeof promptText !== "string") {
-      return new Response(JSON.stringify({ error: "Missing promptText" }), {
+    const { promptText, shortPrompt } = (await req.json()) as GenerateRequest;
+    const source = (shortPrompt ?? promptText ?? "").toString();
+    if (!source) {
+      return new Response(JSON.stringify({ error: "Missing prompt" }), {
         status: 400,
         headers: corsHeaders,
       });
     }
+
+    // Safety net: enforce MusicAPI's <400 char limit on gpt_description_prompt.
+    const finalPrompt = source.length > MAX_PROMPT_LEN
+      ? source.slice(0, MAX_PROMPT_LEN)
+      : source;
+    console.log(`MusicAPI prompt length: ${finalPrompt.length}`);
 
     const musicApiKey = Deno.env.get("MUSICAPI_KEY");
     if (!musicApiKey) {
@@ -49,7 +59,7 @@ Deno.serve(async (req: Request) => {
         task_type: "create_music",
         custom_mode: false,
         mv: "sonic-v5",
-        gpt_description_prompt: promptText,
+        gpt_description_prompt: finalPrompt,
         tags: "instrumental, cinematic, emotional, no vocals",
       }),
     });
