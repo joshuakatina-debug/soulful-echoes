@@ -67,8 +67,9 @@ export function generateSoundPrompt(
 }
 
 /**
- * Build a SHORT music prompt (<400 chars) for MusicAPI's
- * gpt_description_prompt field. Truncates safely to 390 chars.
+ * Build a SHORT music prompt (<=350 chars) for MusicAPI's
+ * gpt_description_prompt field. Shortens by removing adjectives
+ * rather than truncating mid-sentence.
  */
 export function generateShortMusicPrompt(params: {
   archetypeName: string;
@@ -77,16 +78,47 @@ export function generateShortMusicPrompt(params: {
   answers: FlavorAnswers;
 }): string {
   const { archetypeName, coreEmotion, soulKeywords, answers } = params;
-  const phrases = ORDER
+
+  // Shorten a style phrase to its last word (e.g. "warm and intimate" -> "intimate").
+  const shortPhrase = (p: string) => {
+    const cleaned = p.replace(/[.,;]/g, "").trim();
+    const words = cleaned.split(/\s+/);
+    return words[words.length - 1] || cleaned;
+  };
+
+  const stylePhrases = ORDER
     .map((cat) => phraseFor(cat, answers[cat]))
-    .filter((p): p is string => Boolean(p));
+    .filter((p): p is string => Boolean(p))
+    .map(shortPhrase);
 
-  const keywords = soulKeywords.join(", ");
-  const style = phrases.join(", ");
-  const prompt =
-    `Instrumental only. No vocals. Create a ${coreEmotion} piece for ${archetypeName}. ` +
-    `It should feel ${keywords}. Musical style: ${style}. ` +
-    `Cinematic, emotional, high quality.`;
+  const MAX = 350;
 
-  return prompt.length > 390 ? prompt.slice(0, 390) : prompt;
+  const build = (keywords: string[], styles: string[]) => {
+    const kw = keywords.join(", ");
+    const st = styles.join(", ");
+    const styleSegment = st ? ` Style: ${st}.` : "";
+    return (
+      `Instrumental, no vocals. ${archetypeName}. ` +
+      `Core emotion: ${coreEmotion}. ` +
+      `Feel: ${kw}.${styleSegment} ` +
+      `Cinematic, emotional, polished.`
+    );
+  };
+
+  let keywords = soulKeywords.slice(0, 5);
+  let styles = stylePhrases.slice();
+  let prompt = build(keywords, styles);
+
+  // Drop style phrases from the end until under the limit.
+  while (prompt.length > MAX && styles.length > 0) {
+    styles.pop();
+    prompt = build(keywords, styles);
+  }
+  // Then drop keywords from the end.
+  while (prompt.length > MAX && keywords.length > 1) {
+    keywords.pop();
+    prompt = build(keywords, styles);
+  }
+
+  return prompt;
 }
