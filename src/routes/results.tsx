@@ -329,209 +329,105 @@ function Results() {
           </p>
         </div>
 
-        {/* === REMAINING CONTENT === */}
+        {/* === THERE'S MORE TO DISCOVER === */}
         <div
           className={`transition-all duration-1000 ease-out ${
             phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          {/* Core Purpose */}
           <section className="mt-28 sm:mt-36">
-            <p className="mb-8 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              Core Purpose
-            </p>
-            <p className="font-display mx-auto max-w-2xl text-center text-2xl leading-relaxed text-foreground/90 sm:text-3xl">
-              {content.corePurpose}
-            </p>
-          </section>
+            <div className="text-center">
+              <p className="font-display text-4xl leading-tight text-foreground sm:text-5xl md:text-6xl">
+                There's More to Discover
+              </p>
+              <div className="mx-auto mt-6 max-w-xl space-y-1 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                <p>Some parts of us reveal themselves immediately.</p>
+                <p>Others become clearer as we continue looking.</p>
+                <p>Your archetype is only the beginning.</p>
+              </div>
+            </div>
 
-          {/* Emotional Journey */}
-          <section className="mt-28 sm:mt-36">
-            <p className="mb-8 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              Emotional Journey
-            </p>
-            <p className="font-display mx-auto max-w-2xl text-center text-2xl leading-relaxed text-foreground/90 sm:text-3xl">
-              {content.emotionalJourney}
-            </p>
-          </section>
+            <div className="mt-16 sm:mt-20 grid gap-5 sm:grid-cols-2">
+              {/* Emotional Blueprint */}
+              <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                  Emotional Blueprint
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                  A deeper understanding of the emotional patterns that shape your life.
+                </p>
+              </article>
 
-          {/* Desired Listener Experience */}
-          <section className="mt-28 sm:mt-36">
-            <p className="mb-8 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              Desired Listener Experience
-            </p>
-            <p className="font-display mx-auto max-w-2xl text-center text-2xl leading-relaxed text-foreground/90 sm:text-3xl">
-              {content.desiredListenerExperience}
-            </p>
-          </section>
+              {/* Creative Nature */}
+              <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                  Creative Nature
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                  The ways you naturally create, imagine, and bring beauty into the world.
+                </p>
+              </article>
 
-          {/* Divider + Soul Sound */}
-          <section className="mt-28 sm:mt-36">
-            <div className="hairline mb-12" />
-            <p className="mb-10 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              Your Soul Sound
-            </p>
+              {/* Relationships */}
+              <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                  Relationships
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                  How you naturally build trust, offer care, and connect with others.
+                </p>
+              </article>
 
-            <div className="glass-card-warm rounded-3xl px-8 py-12 sm:px-12 sm:py-16">
-              {sound.kind === "idle" && (
-                <div className="flex flex-col items-center gap-6 text-center">
-                  <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-                    Generate the instrumental composition shaped by your soul.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleGenerate}
-                    disabled={!promptText}
-                    className="btn-primary rounded-full px-8 py-3 text-sm font-medium disabled:opacity-50"
-                  >
-                    Generate My Soul Sound
-                  </button>
-                </div>
-              )}
+              {/* Growth */}
+              <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                  Growth
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                  The places where your greatest transformation often begins.
+                </p>
+              </article>
+            </div>
 
-              {sound.kind === "loading" && (
-                <div className="flex flex-col items-center gap-6 text-center">
-                  <div className="flex h-8 items-end gap-1.5">
+            {/* Soul Sound */}
+            <article className="group relative mt-5 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+              <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                Soul Sound
+              </h3>
+              <div className="mt-5 flex items-center gap-5">
+                <div className="h-20 w-20 shrink-0 rounded-2xl bg-gradient-to-br from-foreground/[0.10] via-foreground/[0.05] to-foreground/[0.02] blur-[2px]" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex h-10 items-end gap-1 blur-[1px]">
                     {[35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30, 60].map((h, i) => (
                       <div
                         key={i}
-                        className="w-1 animate-wave rounded-full bg-foreground/30"
-                        style={{
-                          height: `${h}%`,
-                          animationDelay: `${i * 0.08}s`,
-                          opacity: 0.3 + (i % 3) * 0.15,
-                        }}
+                        className="w-1.5 rounded-full bg-foreground/20"
+                        style={{ height: `${h}%`, opacity: 0.3 + (i % 3) * 0.15 }}
                       />
                     ))}
                   </div>
-                  <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-                    Composing your Soul Sound. This usually takes 30–90 seconds.
-                  </p>
+                  <p className="mt-2 text-xs text-foreground/40 blur-[0.5px]">Your Soul Sound</p>
                 </div>
-              )}
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-foreground/20 text-foreground/40 opacity-70 transition duration-500 group-hover:opacity-100">
+                  <svg className="ml-0.5 h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                An original piece of music inspired by the rhythm of your journey.
+              </p>
+            </article>
 
-              {sound.kind === "ready" && (
-                <div className="flex flex-col items-center gap-6">
-                  {sound.imageUrl && (
-                    <img
-                      src={sound.imageUrl}
-                      alt="Soul Sound cover"
-                      className="h-32 w-32 rounded-2xl object-cover shadow-lg"
-                    />
-                  )}
-                  <audio
-                    key={sound.audioUrl}
-                    controls
-                    src={sound.audioUrl}
-                    className="w-full max-w-md"
-                    preload="metadata"
-                    autoPlay={false}
-                    loop={false}
-                    onEnded={(e) => e.currentTarget.pause()}
-                  >
-                    Your browser does not support the audio element.
-                  </audio>
-                  {sound.duration ? (
-                    <p className="text-xs text-muted-foreground">
-                      {Math.round(sound.duration)}s
-                    </p>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const url = sound.audioUrl;
-                      const fallbackTab = window.open(url, "_blank", "noopener,noreferrer");
-                      (async () => {
-                        try {
-                          const res = await fetch(url);
-                          if (!res.ok) throw new Error("fetch failed");
-                          const blob = await res.blob();
-                          const blobUrl = URL.createObjectURL(blob);
-                          const a = document.createElement("a");
-                          a.href = blobUrl;
-                          a.download = "soul-sound.mp3";
-                          document.body.appendChild(a);
-                          a.click();
-                          a.remove();
-                          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-                          fallbackTab?.close();
-                        } catch {
-                          // fallback tab is already open
-                        }
-                      })();
-                    }}
-                    className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
-                  >
-                    Open / Download Soul Sound
-                  </button>
-                  <p className="text-xs text-muted-foreground">
-                    If it opens in a new tab, use your browser's download option.
-                  </p>
-                </div>
-              )}
-
-              {sound.kind === "error" && (
-                <div className="flex flex-col items-center gap-6 text-center">
-                  <p className="max-w-sm text-sm leading-relaxed text-foreground/80">
-                    {sound.message}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={handleGenerate}
-                    className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
-                  >
-                    Try again
-                  </button>
-                </div>
-              )}
+            <div className="mt-16 text-center sm:mt-20">
+              <button
+                type="button"
+                className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
+              >
+                Continue Discovering
+              </button>
             </div>
           </section>
-
-          {/* Music Prompt Preview */}
-          {promptText && (
-            <section className="mt-16 sm:mt-20">
-              <details className="group rounded-2xl border border-foreground/10 bg-foreground/[0.02] px-6 py-5 backdrop-blur-sm transition open:bg-foreground/[0.04] sm:px-8 sm:py-6">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-                  <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                    Music Prompt Preview
-                  </span>
-                  <span className="text-foreground/40 transition group-open:rotate-180">
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </span>
-                </summary>
-                <p className="mt-6 whitespace-pre-wrap text-sm leading-relaxed text-foreground/75 sm:text-base">
-                  {promptText}
-                </p>
-              </details>
-            </section>
-          )}
-
-          {/* CTAs */}
-          <div className="mt-20 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              to="/quiz"
-              className="btn-ghost rounded-full px-6 py-3 text-sm font-medium"
-            >
-              Take the journey again
-            </Link>
-            <Link
-              to="/"
-              className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
-            >
-              Back to home
-            </Link>
-          </div>
         </div>
       </div>
     </main>
