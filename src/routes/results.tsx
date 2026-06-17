@@ -404,28 +404,37 @@ function Results() {
                 ) : null}
                 <button
                   type="button"
-                  onClick={async () => {
+                  onClick={() => {
                     const url = sound.audioUrl;
-                    try {
-                      const res = await fetch(url);
-                      if (!res.ok) throw new Error("fetch failed");
-                      const blob = await res.blob();
-                      const blobUrl = URL.createObjectURL(blob);
-                      const a = document.createElement("a");
-                      a.href = blobUrl;
-                      a.download = "soul-sound.mp3";
-                      document.body.appendChild(a);
-                      a.click();
-                      a.remove();
-                      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-                    } catch {
-                      window.open(url, "_blank", "noopener,noreferrer");
-                    }
+                    // Open fallback tab immediately while user gesture is active
+                    const fallbackTab = window.open(url, "_blank", "noopener,noreferrer");
+                    // Attempt background blob download
+                    (async () => {
+                      try {
+                        const res = await fetch(url);
+                        if (!res.ok) throw new Error("fetch failed");
+                        const blob = await res.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = blobUrl;
+                        a.download = "soul-sound.mp3";
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+                        fallbackTab?.close();
+                      } catch {
+                        // fallback tab is already open
+                      }
+                    })();
                   }}
                   className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
                 >
-                  Download Soul Sound
+                  Open / Download Soul Sound
                 </button>
+                <p className="text-xs text-muted-foreground">
+                  If it opens in a new tab, use your browser's download option.
+                </p>
               </div>
             )}
 
