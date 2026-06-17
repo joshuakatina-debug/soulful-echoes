@@ -80,6 +80,9 @@ function Quiz() {
         {/* Immersive progress */}
         <div className="mt-10 text-center">
           <p className="font-display text-xl text-foreground/80 sm:text-2xl">Discovering Your Soul</p>
+          <p className="mt-3 text-sm italic text-foreground/55">
+            Don't overthink it — choose what feels most like you.
+          </p>
           <div className="mt-4 flex items-center justify-center gap-1.5">
             {Array.from({ length: total }).map((_, i) => {
               const filled = i < step || (i === step && !!selected);
