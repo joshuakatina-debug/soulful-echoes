@@ -74,16 +74,16 @@ function Results() {
   const timeoutTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
+
     const t = setTimeout(() => setResultReady(true), 250);
     return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
-
     return () => {
+
       if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
       if (timeoutTimerRef.current) window.clearTimeout(timeoutTimerRef.current);
     };
@@ -174,8 +174,8 @@ function Results() {
   }
 
   async function pollOnce(taskId: string) {
-
     try {
+
       const { data, error } = await supabase.functions.invoke("check-soul-sound-status", {
         body: { task_id: taskId },
       });
@@ -282,8 +282,8 @@ function Results() {
     );
   }
 
-
   const archetypeName = result.bestMatch.displayName;
+
 
   return (
     <main className="bg-night relative min-h-screen overflow-hidden">
@@ -458,8 +458,8 @@ function Results() {
               </article>
             </div>
 
-
             {/* Soul Sound */}
+
             <article className="group relative mt-5 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
               <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
               <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
@@ -490,8 +490,8 @@ function Results() {
               </p>
             </article>
 
-
             <div className="mt-16 text-center sm:mt-20">
+
               <button
                 type="button"
                 onClick={() => {
