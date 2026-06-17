@@ -61,45 +61,6 @@ function capitalize(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-function AudioPlaceholder() {
-  return (
-    <div className="flex flex-col items-center gap-6">
-      <button
-        type="button"
-        className="flex h-20 w-20 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 transition hover:bg-foreground/10 hover:scale-105"
-        aria-label="Play placeholder"
-      >
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="text-foreground/60 ml-1"
-        >
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      </button>
-
-      <div className="flex items-end gap-1.5 h-8">
-        {[35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30, 60].map((h, i) => (
-          <div
-            key={i}
-            className="w-1 rounded-full bg-foreground/20 animate-wave"
-            style={{
-              height: `${h}%`,
-              animationDelay: `${i * 0.08}s`,
-              opacity: 0.3 + (i % 3) * 0.15,
-            }}
-          />
-        ))}
-      </div>
-
-      <p className="max-w-xs text-center text-sm leading-relaxed text-muted-foreground">
-        Your personalized instrumental composition will appear here.
-      </p>
-    </div>
-  );
-}
 
 function Results() {
   const [result, setResult] = useState<StoredSoulResult | null>(null);
