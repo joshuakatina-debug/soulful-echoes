@@ -166,6 +166,7 @@ function Results() {
   async function handleGenerate() {
     if (!promptText) return;
     setSound({ kind: "loading" });
+    setDebug({ taskId: null, attempts: 0, lastResponse: null, lastStatus: null, lastAudioUrl: null });
     try {
       console.log(`Short MusicAPI prompt length: ${shortPrompt.length}`);
       const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
