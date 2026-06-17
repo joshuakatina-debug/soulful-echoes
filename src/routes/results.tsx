@@ -173,8 +173,8 @@ function Results() {
     }
   }
 
-
   async function pollOnce(taskId: string) {
+
     try {
       const { data, error } = await supabase.functions.invoke("check-soul-sound-status", {
         body: { task_id: taskId },
@@ -212,8 +212,8 @@ function Results() {
     setDownloadMode("download");
     setSound({ kind: "loading" });
 
-
     try {
+
       console.log(`Short MusicAPI prompt length: ${shortPrompt.length}`);
       const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
         body: { promptText, shortPrompt },
