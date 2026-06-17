@@ -126,11 +126,19 @@ function Results() {
       });
       if (error) {
         console.error("status invoke error", error);
+        setDebug((d) => ({ ...d, attempts: d.attempts + 1, lastResponse: { error: String(error) } }));
         return;
       }
       console.log("[poll] response", data);
-      const status = data?.status as string | undefined;
-      const audioUrl = data?.audioUrl as string | undefined;
+      const status = (data?.status as string | undefined) ?? null;
+      const audioUrl = (data?.audioUrl as string | undefined) ?? null;
+      setDebug((d) => ({
+        ...d,
+        attempts: d.attempts + 1,
+        lastResponse: data,
+        lastStatus: status,
+        lastAudioUrl: audioUrl,
+      }));
       // Stop polling immediately once audioUrl exists.
       if (audioUrl) {
         stopPolling();
