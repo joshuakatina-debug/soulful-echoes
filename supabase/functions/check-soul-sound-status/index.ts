@@ -68,13 +68,10 @@ Deno.serve(async (req: Request) => {
       console.log(`[status] task_id=${task_id} not_ready, continuing to poll`);
       return new Response(
         JSON.stringify({
-          task_id,
-          status: "pending",
+          status: "processing",
           audioUrl: null,
-          imageUrl: null,
-          duration: null,
-          title: null,
           taskId: task_id,
+          raw: data,
         }),
         { status: 200, headers: corsHeaders },
       );
@@ -83,14 +80,15 @@ Deno.serve(async (req: Request) => {
     const clips: any[] = Array.isArray(data?.data) ? data.data : [];
     const clip = clips[0] ?? {};
 
-    const status: string | null = clip?.state ?? null;
+    const state: string | null = clip?.state ?? null;
     const audioUrl: string | null = clip?.audio_url ?? null;
     const imageUrl: string | null = clip?.image_url ?? null;
     const duration = clip?.duration ?? null;
     const title: string | null = clip?.title ?? null;
+    const status = audioUrl ? "succeeded" : (state ?? "processing");
 
     console.log(
-      `[status] task_id=${task_id} state=${status} audio_url=${audioUrl ? "yes" : "no"} clips=${clips.length}`,
+      `[status] task_id=${task_id} state=${state} audio_url=${audioUrl ? "yes" : "no"} clips=${clips.length}`,
     );
 
     return new Response(
@@ -101,6 +99,7 @@ Deno.serve(async (req: Request) => {
         duration,
         title,
         taskId: task_id,
+        raw: data,
       }),
       { status: 200, headers: corsHeaders },
     );
