@@ -388,12 +388,14 @@ function Results() {
                   />
                 )}
                 <audio
+                  key={sound.audioUrl}
                   controls
                   src={sound.audioUrl}
                   className="w-full max-w-md"
                   preload="metadata"
                   autoPlay={false}
                   loop={false}
+                  onEnded={(e) => e.currentTarget.pause()}
                 >
                   Your browser does not support the audio element.
                 </audio>
