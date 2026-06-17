@@ -1,11 +1,32 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { loadSoulResult, type StoredSoulResult } from "@/lib/soul-result";
 import { archetypeContent } from "@/data/archetypeContent";
 import { generateSoundPrompt, type FlavorAnswers } from "@/engine/promptGenerator";
 import type { FlavorOption } from "@/data/flavorMappings";
+import { supabase } from "@/integrations/supabase/client";
 
 const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
+const POLL_INTERVAL_MS = 15_000;
+const POLL_TIMEOUT_MS = 2 * 60_000;
+
+type SoundStatus =
+  | { kind: "idle" }
+  | { kind: "loading" }
+  | { kind: "ready"; audioUrl: string; imageUrl?: string | null; duration?: number | null }
+  | { kind: "error"; message: string };
+
+function isSuccess(s?: string | null) {
+  if (!s) return false;
+  const v = s.toLowerCase();
+  return v === "complete" || v === "completed" || v === "success" || v === "succeeded" || v === "finished";
+}
+
+function isFailure(s?: string | null) {
+  if (!s) return false;
+  const v = s.toLowerCase();
+  return v === "failed" || v === "error" || v === "cancelled" || v === "canceled";
+}
 
 function loadFlavorAnswers(): FlavorAnswers {
   try {
@@ -40,52 +61,24 @@ function capitalize(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-function AudioPlaceholder() {
-  return (
-    <div className="flex flex-col items-center gap-6">
-      <button
-        type="button"
-        className="flex h-20 w-20 items-center justify-center rounded-full border border-foreground/10 bg-foreground/5 transition hover:bg-foreground/10 hover:scale-105"
-        aria-label="Play placeholder"
-      >
-        <svg
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="text-foreground/60 ml-1"
-        >
-          <path d="M8 5v14l11-7z" />
-        </svg>
-      </button>
-
-      <div className="flex items-end gap-1.5 h-8">
-        {[35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30, 60].map((h, i) => (
-          <div
-            key={i}
-            className="w-1 rounded-full bg-foreground/20 animate-wave"
-            style={{
-              height: `${h}%`,
-              animationDelay: `${i * 0.08}s`,
-              opacity: 0.3 + (i % 3) * 0.15,
-            }}
-          />
-        ))}
-      </div>
-
-      <p className="max-w-xs text-center text-sm leading-relaxed text-muted-foreground">
-        Your personalized instrumental composition will appear here.
-      </p>
-    </div>
-  );
-}
 
 function Results() {
   const [result, setResult] = useState<StoredSoulResult | null>(null);
   const [flavorAnswers, setFlavorAnswers] = useState<FlavorAnswers>({});
+  const [sound, setSound] = useState<SoundStatus>({ kind: "idle" });
+  const pollTimerRef = useRef<number | null>(null);
+  const timeoutTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
+      if (timeoutTimerRef.current) window.clearTimeout(timeoutTimerRef.current);
+    };
   }, []);
 
   const archetypeIdForPrompt = result?.bestMatch.id ?? null;
@@ -95,6 +88,86 @@ function Results() {
     if (!c) return "";
     return generateSoundPrompt(c.promptFoundation, flavorAnswers);
   }, [archetypeIdForPrompt, flavorAnswers]);
+
+  function stopPolling() {
+    if (pollTimerRef.current) {
+      window.clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+    if (timeoutTimerRef.current) {
+      window.clearTimeout(timeoutTimerRef.current);
+      timeoutTimerRef.current = null;
+    }
+  }
+
+  async function pollOnce(taskId: string) {
+    try {
+      const { data, error } = await supabase.functions.invoke("check-soul-sound-status", {
+        body: { task_id: taskId },
+      });
+      if (error) {
+        console.error("status invoke error", error);
+        return;
+      }
+      const status = data?.status as string | undefined;
+      const audioUrl = data?.audio_url as string | undefined;
+      if (audioUrl && (isSuccess(status) || !status)) {
+        stopPolling();
+        setSound({
+          kind: "ready",
+          audioUrl,
+          imageUrl: data?.image_url ?? null,
+          duration: data?.duration ?? null,
+        });
+        return;
+      }
+      if (isFailure(status)) {
+        stopPolling();
+        setSound({
+          kind: "error",
+          message: "Your Soul Sound needs a little more time. Please try again.",
+        });
+      }
+    } catch (e) {
+      console.error("poll error", e);
+    }
+  }
+
+  async function handleGenerate() {
+    if (!promptText) return;
+    setSound({ kind: "loading" });
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
+        body: { promptText },
+      });
+      if (error || !data?.task_id) {
+        console.error("generate invoke error", error, data);
+        setSound({
+          kind: "error",
+          message: "Your Soul Sound needs a little more time. Please try again.",
+        });
+        return;
+      }
+      const taskId: string = data.task_id;
+      // Kick off polling immediately, then every 15s.
+      void pollOnce(taskId);
+      pollTimerRef.current = window.setInterval(() => pollOnce(taskId), POLL_INTERVAL_MS);
+      timeoutTimerRef.current = window.setTimeout(() => {
+        stopPolling();
+        setSound((prev) =>
+          prev.kind === "ready"
+            ? prev
+            : { kind: "error", message: "Your Soul Sound needs a little more time. Please try again." },
+        );
+      }, POLL_TIMEOUT_MS);
+    } catch (e) {
+      console.error("generate error", e);
+      setSound({
+        kind: "error",
+        message: "Your Soul Sound needs a little more time. Please try again.",
+      });
+    }
+  }
 
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
@@ -250,7 +323,82 @@ function Results() {
           </p>
 
           <div className="glass-card-warm rounded-3xl px-8 py-12 sm:px-12 sm:py-16">
-            <AudioPlaceholder />
+            {sound.kind === "idle" && (
+              <div className="flex flex-col items-center gap-6 text-center">
+                <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                  Generate the instrumental composition shaped by your soul.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  disabled={!promptText}
+                  className="btn-primary rounded-full px-8 py-3 text-sm font-medium disabled:opacity-50"
+                >
+                  Generate My Soul Sound
+                </button>
+              </div>
+            )}
+
+            {sound.kind === "loading" && (
+              <div className="flex flex-col items-center gap-6 text-center">
+                <div className="flex items-end gap-1.5 h-8">
+                  {[35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30, 60].map((h, i) => (
+                    <div
+                      key={i}
+                      className="w-1 rounded-full bg-foreground/30 animate-wave"
+                      style={{
+                        height: `${h}%`,
+                        animationDelay: `${i * 0.08}s`,
+                        opacity: 0.3 + (i % 3) * 0.15,
+                      }}
+                    />
+                  ))}
+                </div>
+                <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                  Composing your Soul Sound. This usually takes 30–90 seconds.
+                </p>
+              </div>
+            )}
+
+            {sound.kind === "ready" && (
+              <div className="flex flex-col items-center gap-6">
+                {sound.imageUrl && (
+                  <img
+                    src={sound.imageUrl}
+                    alt="Soul Sound cover"
+                    className="h-32 w-32 rounded-2xl object-cover shadow-lg"
+                  />
+                )}
+                <audio
+                  controls
+                  src={sound.audioUrl}
+                  className="w-full max-w-md"
+                  preload="metadata"
+                >
+                  Your browser does not support the audio element.
+                </audio>
+                {sound.duration ? (
+                  <p className="text-xs text-muted-foreground">
+                    {Math.round(sound.duration)}s
+                  </p>
+                ) : null}
+              </div>
+            )}
+
+            {sound.kind === "error" && (
+              <div className="flex flex-col items-center gap-6 text-center">
+                <p className="max-w-sm text-sm leading-relaxed text-foreground/80">
+                  {sound.message}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
+                >
+                  Try again
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
