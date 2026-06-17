@@ -128,6 +128,86 @@ function Results() {
     return generateSoundPrompt(c.promptFoundation, flavorAnswers);
   }, [archetypeIdForPrompt, flavorAnswers]);
 
+  function stopPolling() {
+    if (pollTimerRef.current) {
+      window.clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+    if (timeoutTimerRef.current) {
+      window.clearTimeout(timeoutTimerRef.current);
+      timeoutTimerRef.current = null;
+    }
+  }
+
+  async function pollOnce(taskId: string) {
+    try {
+      const { data, error } = await supabase.functions.invoke("check-soul-sound-status", {
+        body: { task_id: taskId },
+      });
+      if (error) {
+        console.error("status invoke error", error);
+        return;
+      }
+      const status = data?.status as string | undefined;
+      const audioUrl = data?.audio_url as string | undefined;
+      if (audioUrl && (isSuccess(status) || !status)) {
+        stopPolling();
+        setSound({
+          kind: "ready",
+          audioUrl,
+          imageUrl: data?.image_url ?? null,
+          duration: data?.duration ?? null,
+        });
+        return;
+      }
+      if (isFailure(status)) {
+        stopPolling();
+        setSound({
+          kind: "error",
+          message: "Your Soul Sound needs a little more time. Please try again.",
+        });
+      }
+    } catch (e) {
+      console.error("poll error", e);
+    }
+  }
+
+  async function handleGenerate() {
+    if (!promptText) return;
+    setSound({ kind: "loading" });
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
+        body: { promptText },
+      });
+      if (error || !data?.task_id) {
+        console.error("generate invoke error", error, data);
+        setSound({
+          kind: "error",
+          message: "Your Soul Sound needs a little more time. Please try again.",
+        });
+        return;
+      }
+      const taskId: string = data.task_id;
+      // Kick off polling immediately, then every 15s.
+      void pollOnce(taskId);
+      pollTimerRef.current = window.setInterval(() => pollOnce(taskId), POLL_INTERVAL_MS);
+      timeoutTimerRef.current = window.setTimeout(() => {
+        stopPolling();
+        setSound((prev) =>
+          prev.kind === "ready"
+            ? prev
+            : { kind: "error", message: "Your Soul Sound needs a little more time. Please try again." },
+        );
+      }, POLL_TIMEOUT_MS);
+    } catch (e) {
+      console.error("generate error", e);
+      setSound({
+        kind: "error",
+        message: "Your Soul Sound needs a little more time. Please try again.",
+      });
+    }
+  }
+
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
