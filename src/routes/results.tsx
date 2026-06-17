@@ -2,7 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { loadSoulResult, type StoredSoulResult } from "@/lib/soul-result";
 import { archetypeContent } from "@/data/archetypeContent";
-import { generateSoundPrompt, generateShortMusicPrompt, type FlavorAnswers } from "@/engine/promptGenerator";
+import {
+  generateSoundPrompt,
+  generateShortMusicPrompt,
+  type FlavorAnswers,
+} from "@/engine/promptGenerator";
 import type { FlavorOption } from "@/data/flavorMappings";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -19,13 +23,21 @@ type SoundStatus =
 function isSuccess(s?: string | null) {
   if (!s) return false;
   const v = s.toLowerCase();
-  return v === "complete" || v === "completed" || v === "success" || v === "succeeded" || v === "finished";
+  return (
+    v === "complete" ||
+    v === "completed" ||
+    v === "success" ||
+    v === "succeeded" ||
+    v === "finished"
+  );
 }
 
 function isFailure(s?: string | null) {
   if (!s) return false;
   const v = s.toLowerCase();
-  return v === "failed" || v === "error" || v === "rejected" || v === "cancelled" || v === "canceled";
+  return (
+    v === "failed" || v === "error" || v === "rejected" || v === "cancelled" || v === "canceled"
+  );
 }
 
 function loadFlavorAnswers(): FlavorAnswers {
@@ -66,12 +78,19 @@ function Results() {
   const [flavorAnswers, setFlavorAnswers] = useState<FlavorAnswers>({});
   const [sound, setSound] = useState<SoundStatus>({ kind: "idle" });
   const [phase, setPhase] = useState(0);
+  const [resultReady, setResultReady] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
+
+    const t = setTimeout(() => setResultReady(true), 250);
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
@@ -126,6 +145,45 @@ function Results() {
     }
   }
 
+  function handleEnded() {
+    setIsPlaying(false);
+  }
+
+  function togglePlay() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused || audio.ended) {
+      void audio.play();
+    } else {
+      audio.pause();
+    }
+  }
+
+  async function handleDownload() {
+    if (sound.kind !== "ready") return;
+    if (downloadMode === "open") {
+      window.open(sound.audioUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    try {
+      const response = await fetch(sound.audioUrl, { mode: "cors" });
+      if (!response.ok) throw new Error("Network response was not ok");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `soul-sound-${archetypeName.toLowerCase().replace(/\s+/g, "-")}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Download failed, falling back to open in new tab", e);
+      setDownloadMode("open");
+      window.open(sound.audioUrl, "_blank", "noopener,noreferrer");
+    }
+  }
+
   async function pollOnce(taskId: string) {
     try {
       const { data, error } = await supabase.functions.invoke("check-soul-sound-status", {
@@ -161,6 +219,7 @@ function Results() {
 
   async function handleGenerate() {
     if (!promptText) return;
+    setDownloadMode("download");
     setSound({ kind: "loading" });
 
     try {
@@ -185,7 +244,10 @@ function Results() {
         setSound((prev) =>
           prev.kind === "ready"
             ? prev
-            : { kind: "error", message: "Your Soul Sound needs a little more time. Please try again." },
+            : {
+                kind: "error",
+                message: "Your Soul Sound needs a little more time. Please try again.",
+              },
         );
       }, POLL_TIMEOUT_MS);
     } catch (e) {
@@ -199,6 +261,20 @@ function Results() {
 
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
+
+  if (!resultReady) {
+    return (
+      <main className="bg-night relative flex min-h-screen items-center justify-center overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-32 left-1/3 h-[28rem] w-[28rem] rounded-full bg-[oklch(0.82_0.13_85)] opacity-15 blur-3xl animate-float-slow" />
+          <div
+            className="absolute bottom-0 right-0 h-[30rem] w-[30rem] rounded-full bg-[oklch(0.55_0.18_305)] opacity-20 blur-3xl animate-float-slow"
+            style={{ animationDelay: "-7s" }}
+          />
+        </div>
+      </main>
+    );
+  }
 
   if (!result || !content) {
     return (
@@ -350,55 +426,64 @@ function Results() {
             <div className="mt-16 sm:mt-20 grid gap-5 sm:grid-cols-2">
               {/* Emotional Blueprint */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
+                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                   Emotional Blueprint
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
                   A deeper understanding of the emotional patterns that shape your life.
                 </p>
               </article>
 
               {/* Creative Nature */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                   Creative Nature
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
                   The ways you naturally create, imagine, and bring beauty into the world.
                 </p>
               </article>
 
               {/* Relationships */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
+                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                   Relationships
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
                   How you naturally build trust, offer care, and connect with others.
                 </p>
               </article>
 
               {/* Growth */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                   Growth
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
                   The places where your greatest transformation often begins.
                 </p>
               </article>
             </div>
 
             {/* Soul Sound */}
+
             <article className="group relative mt-5 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-              <h3 className="font-display text-xl text-foreground/80 sm:text-2xl">
+              <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+              <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
                 Soul Sound
               </h3>
-              <div className="mt-5 flex items-center gap-5">
+              <div className="relative mt-5 flex items-center gap-5">
                 <div className="h-20 w-20 shrink-0 rounded-2xl bg-gradient-to-br from-foreground/[0.10] via-foreground/[0.05] to-foreground/[0.02] blur-[2px]" />
                 <div className="min-w-0 flex-1">
                   <div className="flex h-10 items-end gap-1 blur-[1px]">
-                    {[35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30, 60].map((h, i) => (
+                    {[
+                      35, 55, 25, 70, 45, 80, 30, 60, 40, 75, 50, 35, 65, 45, 85, 55, 40, 70, 30,
+                      60,
+                    ].map((h, i) => (
                       <div
                         key={i}
                         className="w-1.5 rounded-full bg-foreground/20"
@@ -406,7 +491,7 @@ function Results() {
                       />
                     ))}
                   </div>
-                  <p className="mt-2 text-xs text-foreground/40 blur-[0.5px]">Your Soul Sound</p>
+                  <p className="mt-2 text-xs text-foreground/50">Your Soul Sound</p>
                 </div>
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-foreground/20 text-foreground/40 opacity-70 transition duration-500 group-hover:opacity-100">
                   <svg className="ml-0.5 h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
@@ -414,7 +499,7 @@ function Results() {
                   </svg>
                 </div>
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-foreground/45 blur-[0.5px]">
+              <p className="relative mt-4 text-sm leading-relaxed text-foreground/70">
                 An original piece of music inspired by the rhythm of your journey.
               </p>
             </article>
@@ -422,10 +507,129 @@ function Results() {
             <div className="mt-16 text-center sm:mt-20">
               <button
                 type="button"
+                onClick={() => {
+                  const el = document.getElementById("soul-sound-section");
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
                 className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
               >
                 Continue Discovering
               </button>
+            </div>
+          </section>
+
+          {/* === SOUL SOUND (TESTING) === */}
+          <section id="soul-sound-section" className="mt-28 sm:mt-36">
+            <div className="text-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                Original Composition
+              </p>
+              <p className="font-display mt-4 text-3xl text-foreground sm:text-4xl">
+                Your Soul Sound
+              </p>
+              <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-foreground/60">
+                An original piece of music inspired by the rhythm and emotion of your archetype.
+              </p>
+            </div>
+
+            <div className="mt-12">
+              {sound.kind === "idle" && (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={handleGenerate}
+                    disabled={!promptText}
+                    className="btn-primary rounded-full px-8 py-3 text-sm font-medium disabled:opacity-50"
+                  >
+                    Generate My Soul Sound
+                  </button>
+                </div>
+              )}
+
+              {sound.kind === "loading" && (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="relative h-12 w-12">
+                    <div className="absolute inset-0 rounded-full border-2 border-foreground/10" />
+                    <div className="absolute inset-0 rounded-full border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                  </div>
+                  <p className="mt-6 text-sm text-muted-foreground">
+                    Composing your original Soul Sound...
+                  </p>
+                </div>
+              )}
+
+              {sound.kind === "error" && (
+                <div className="text-center py-12">
+                  <p className="text-sm text-foreground/70">{sound.message}</p>
+                  <button
+                    type="button"
+                    onClick={handleGenerate}
+                    className="btn-primary mt-6 rounded-full px-8 py-3 text-sm font-medium"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+
+              {sound.kind === "ready" && (
+                <div className="glass-card-warm rounded-2xl p-6 sm:p-8">
+                  <div className="flex flex-col items-center gap-6 sm:flex-row">
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition hover:scale-105"
+                    >
+                      {isPlaying ? (
+                        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                          <rect x="6" y="4" width="4" height="16" />
+                          <rect x="14" y="4" width="4" height="16" />
+                        </svg>
+                      ) : (
+                        <svg className="ml-1 h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      )}
+                    </button>
+                    <div className="min-w-0 flex-1 text-center sm:text-left">
+                      <p className="font-display text-lg text-foreground">
+                        {archetypeName} — Soul Sound
+                      </p>
+                      <p className="text-sm text-foreground/60">
+                        {sound.duration
+                          ? `${Math.round(sound.duration)} seconds`
+                          : "An original composition inspired by your archetype"}
+                      </p>
+                    </div>
+                    <div className="shrink-0">
+                      <button
+                        type="button"
+                        onClick={handleDownload}
+                        className="btn-ghost rounded-full px-6 py-2 text-sm font-medium"
+                      >
+                        {downloadMode === "open"
+                          ? "Open / Download Soul Sound"
+                          : "Download Soul Sound"}
+                      </button>
+                    </div>
+                  </div>
+                  <audio
+                    ref={audioRef}
+                    key={sound.audioUrl}
+                    src={sound.audioUrl}
+                    loop={false}
+                    className="mt-6 w-full"
+                    controls
+                    onEnded={handleEnded}
+                    onPlay={() => setIsPlaying(true)}
+                    onPause={() => setIsPlaying(false)}
+                  />
+                  {downloadMode === "open" && (
+                    <p className="mt-4 text-center text-xs text-foreground/50">
+                      If it opens in a new tab, use your browser’s download option.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </section>
         </div>
