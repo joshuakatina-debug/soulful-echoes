@@ -121,15 +121,17 @@ function Results() {
         console.error("status invoke error", error);
         return;
       }
+      console.log("[poll] response", data);
       const status = data?.status as string | undefined;
-      const audioUrl = data?.audio_url as string | undefined;
-      if (audioUrl && (isSuccess(status) || !status)) {
+      const audioUrl = data?.audioUrl as string | undefined;
+      // Stop polling immediately once audioUrl exists.
+      if (audioUrl) {
         stopPolling();
         setSound({
           kind: "ready",
           audioUrl,
-          imageUrl: data?.image_url ?? null,
-          duration: data?.duration ?? null,
+          imageUrl: data?.imageUrl ?? null,
+          duration: data?.duration ? Number(data.duration) : null,
         });
         return;
       }
@@ -144,6 +146,7 @@ function Results() {
       console.error("poll error", e);
     }
   }
+
 
   async function handleGenerate() {
     if (!promptText) return;
