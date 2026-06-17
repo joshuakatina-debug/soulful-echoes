@@ -1,11 +1,32 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { loadSoulResult, type StoredSoulResult } from "@/lib/soul-result";
 import { archetypeContent } from "@/data/archetypeContent";
 import { generateSoundPrompt, type FlavorAnswers } from "@/engine/promptGenerator";
 import type { FlavorOption } from "@/data/flavorMappings";
+import { supabase } from "@/integrations/supabase/client";
 
 const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
+const POLL_INTERVAL_MS = 15_000;
+const POLL_TIMEOUT_MS = 2 * 60_000;
+
+type SoundStatus =
+  | { kind: "idle" }
+  | { kind: "loading" }
+  | { kind: "ready"; audioUrl: string; imageUrl?: string | null; duration?: number | null }
+  | { kind: "error"; message: string };
+
+function isSuccess(s?: string | null) {
+  if (!s) return false;
+  const v = s.toLowerCase();
+  return v === "complete" || v === "completed" || v === "success" || v === "succeeded" || v === "finished";
+}
+
+function isFailure(s?: string | null) {
+  if (!s) return false;
+  const v = s.toLowerCase();
+  return v === "failed" || v === "error" || v === "cancelled" || v === "canceled";
+}
 
 function loadFlavorAnswers(): FlavorAnswers {
   try {
