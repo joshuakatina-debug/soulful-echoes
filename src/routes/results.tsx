@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { loadSoulResult, type StoredSoulResult } from "@/lib/soul-result";
 import { archetypeContent } from "@/data/archetypeContent";
-import { generateSoundPrompt, type FlavorAnswers } from "@/engine/promptGenerator";
+import { generateSoundPrompt, generateShortMusicPrompt, type FlavorAnswers } from "@/engine/promptGenerator";
 import type { FlavorOption } from "@/data/flavorMappings";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -89,6 +89,18 @@ function Results() {
     return generateSoundPrompt(c.promptFoundation, flavorAnswers);
   }, [archetypeIdForPrompt, flavorAnswers]);
 
+  const shortPrompt = useMemo(() => {
+    if (!result || !archetypeIdForPrompt) return "";
+    const c = archetypeContent[archetypeIdForPrompt];
+    if (!c) return "";
+    return generateShortMusicPrompt({
+      archetypeName: result.bestMatch.displayName,
+      coreEmotion: c.coreEmotion,
+      soulKeywords: c.soulKeywords,
+      answers: flavorAnswers,
+    });
+  }, [result, archetypeIdForPrompt, flavorAnswers]);
+
   function stopPolling() {
     if (pollTimerRef.current) {
       window.clearInterval(pollTimerRef.current);
@@ -137,8 +149,9 @@ function Results() {
     if (!promptText) return;
     setSound({ kind: "loading" });
     try {
+      console.log(`Short MusicAPI prompt length: ${shortPrompt.length}`);
       const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
-        body: { promptText },
+        body: { promptText, shortPrompt },
       });
       if (error || !data?.task_id) {
         console.error("generate invoke error", error, data);
