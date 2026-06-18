@@ -147,8 +147,27 @@ function Results() {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
     try {
-      setIsPaid(localStorage.getItem("soulSoundsPaid") === "true");
-      const sid = localStorage.getItem("soulSoundsSessionId");
+      // URL is the source of truth for the purchase identifier. localStorage
+      // is only a performance cache so refreshes feel instant.
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlSid = urlParams.get("session_id");
+      const localSid = localStorage.getItem("soulSoundsSessionId");
+      const sid = urlSid || localSid;
+
+      if (urlSid) {
+        // A session_id in the URL means this is a paid reveal — works on any
+        // device, any browser, even with cleared storage.
+        try {
+          localStorage.setItem("soulSoundsSessionId", urlSid);
+          localStorage.setItem("soulSoundsPaid", "true");
+        } catch {
+          // ignore
+        }
+        setIsPaid(true);
+      } else {
+        setIsPaid(localStorage.getItem("soulSoundsPaid") === "true");
+      }
+
       if (sid) setSessionId(sid);
       if (localStorage.getItem("soulSoundsAutoGenerate") === "true") {
         setAutoGenerate(true);
@@ -188,6 +207,7 @@ function Results() {
       clearTimeout(fallbackT);
     };
   }, []);
+
 
 
   useEffect(() => {
@@ -441,6 +461,16 @@ function Results() {
           return;
         }
         if (data?.exists) {
+          // A DB record proves this session was paid — flip the flag so any
+          // UI gated on isPaid (e.g. hiding the Generate button) is correct
+          // even when the user lands here without local payment state.
+          setIsPaid(true);
+          try {
+            localStorage.setItem("soulSoundsPaid", "true");
+          } catch {
+            // ignore
+          }
+
           // Reconstruct the result from the DB record when local state is
           // missing (e.g. user returns on a new browser/device). archetype_id
           // is the only identifier we need — all reveal copy is keyed by it.
