@@ -134,6 +134,9 @@ function Results() {
   const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
   const [isPaid, setIsPaid] = useState(false);
   const [autoGenerate, setAutoGenerate] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [lookupDone, setLookupDone] = useState(false);
+  const [recordExists, setRecordExists] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
@@ -145,9 +148,34 @@ function Results() {
     setFlavorAnswers(loadFlavorAnswers());
     try {
       setIsPaid(localStorage.getItem("soulSoundsPaid") === "true");
+      const sid = localStorage.getItem("soulSoundsSessionId");
+      if (sid) setSessionId(sid);
       if (localStorage.getItem("soulSoundsAutoGenerate") === "true") {
         setAutoGenerate(true);
         localStorage.removeItem("soulSoundsAutoGenerate");
+      }
+
+      // Optimistic cache: if we already have a ready Soul Sound stored locally
+      // for this session, show it immediately. We still validate against the DB
+      // below, but this avoids any flash of the loading/generate UI on refresh.
+      if (sid) {
+        const cachedRaw = localStorage.getItem(`soulSound:${sid}`);
+        if (cachedRaw) {
+          try {
+            const cached = JSON.parse(cachedRaw);
+            if (cached?.audioUrl) {
+              setSound({
+                kind: "ready",
+                audioUrl: cached.audioUrl,
+                imageUrl: cached.imageUrl ?? null,
+                duration: cached.duration ?? null,
+              });
+              setRecordExists(true);
+            }
+          } catch {
+            // ignore
+          }
+        }
       }
     } catch (_) {
       // ignore
