@@ -441,8 +441,8 @@ function Results() {
           return;
         }
         if (data?.exists) {
-          setRecordExists(true);
           if (data.status === "ready" && data.audioUrl) {
+            setRecordExists(true);
             setSound({
               kind: "ready",
               audioUrl: data.audioUrl,
@@ -456,9 +456,12 @@ function Results() {
               title: data.title ?? null,
             });
           } else if (data.status === "generating" && data.taskId) {
+            setRecordExists(true);
             setSound({ kind: "loading" });
             startPolling(data.taskId, sessionId);
           }
+          // If status === "failed", leave recordExists=false so the user can
+          // retry exactly once via the Try Again button.
         }
       } catch (e) {
         console.error("get-soul-sound exception", e);
