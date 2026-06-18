@@ -56,6 +56,7 @@ function CompletePage() {
           try {
             localStorage.setItem("soulSoundsPaid", "true");
             localStorage.setItem("soulSoundsAutoGenerate", "true");
+            localStorage.setItem("soulSoundsSessionId", sessionId);
           } catch (_) {
             // ignore
           }
