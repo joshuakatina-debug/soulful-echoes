@@ -434,64 +434,127 @@ function Results() {
           </p>
         </div>
 
-        {/* === SOUL SOUND PREVIEW === */}
+        {/* === SOUL SOUND (editorial centerpiece) === */}
         <div
           className={`transition-all duration-1000 ease-out ${
             phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <section className="mt-20 sm:mt-24">
-            <article className="group relative overflow-hidden rounded-3xl border border-foreground/[0.10] bg-foreground/[0.03] p-8 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.16] hover:bg-foreground/[0.05] sm:p-12">
-              <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.08] blur-3xl" />
-              <div className="pointer-events-none absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.08] blur-3xl" />
+          <section id="soul-sound-section" className="mt-24 sm:mt-32">
+            <article className="relative overflow-hidden rounded-[2rem] border border-foreground/[0.10] bg-foreground/[0.03] px-6 py-14 backdrop-blur-sm sm:px-14 sm:py-20">
+              <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.10] blur-3xl" />
+              <div className="pointer-events-none absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.10] blur-3xl" />
 
               <div className="relative text-center">
-                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                  At the heart of it
-                </p>
-                <h3 className="font-display mt-4 text-3xl text-foreground sm:text-4xl md:text-5xl">
+                <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
                   Your Soul Sound
-                </h3>
-                <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
-                  The music that reflects the rhythm, feeling, and movement of your inner world.
+                </p>
+                <h2 className="font-display mt-6 text-4xl leading-[1.05] text-foreground sm:text-5xl md:text-6xl">
+                  Now hear it in sound.
+                </h2>
+                <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+                  An original instrumental reflection shaped by the rhythm, feeling, and movement of your archetype.
                 </p>
               </div>
 
-              <div className="relative mt-10 flex flex-col items-center gap-6 sm:flex-row sm:gap-8">
-                <div className="h-28 w-28 shrink-0 rounded-3xl bg-gradient-to-br from-[oklch(0.82_0.13_85/0.25)] via-foreground/[0.06] to-[oklch(0.55_0.18_305/0.20)] blur-[3px] sm:h-32 sm:w-32" />
-                <div className="min-w-0 flex-1 w-full">
-                  <div className="flex h-14 items-end gap-1.5 blur-[1.5px]">
-                    {[
-                      30, 55, 25, 70, 45, 80, 35, 60, 40, 75, 50, 30, 65, 45, 85, 55, 40, 70, 30,
-                      60, 45, 75, 35, 55,
-                    ].map((h, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 rounded-full bg-foreground/25"
-                        style={{ height: `${h}%`, opacity: 0.35 + (i % 3) * 0.15 }}
-                      />
-                    ))}
+              <div className="relative mt-12">
+                {sound.kind === "idle" && (
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={handleGenerate}
+                      disabled={!promptText}
+                      className="btn-primary rounded-full px-10 py-4 text-sm font-medium tracking-wide disabled:opacity-50"
+                    >
+                      Create My Soul Sound
+                    </button>
                   </div>
-                  <p className="mt-3 text-xs italic text-foreground/55">Waiting for you</p>
-                </div>
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-foreground/25 text-foreground/50 transition duration-500 group-hover:border-foreground/40 group-hover:text-foreground/70">
-                  <svg className="ml-1 h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-              </div>
+                )}
 
-              <div className="relative mt-12 text-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById("soul-sound-section");
-                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }}
-                  className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
-                >
-                  Continue Discovering
-                </button>
+                {sound.kind === "loading" && (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <div className="relative h-12 w-12">
+                      <div className="absolute inset-0 rounded-full border-2 border-foreground/10" />
+                      <div className="absolute inset-0 rounded-full border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                    </div>
+                    <p className="mt-6 text-sm italic text-muted-foreground">
+                      Listening for your rhythm...
+                    </p>
+                  </div>
+                )}
+
+                {sound.kind === "error" && (
+                  <div className="text-center py-10">
+                    <p className="text-sm text-foreground/70">{sound.message}</p>
+                    <button
+                      type="button"
+                      onClick={handleGenerate}
+                      className="btn-primary mt-6 rounded-full px-8 py-3 text-sm font-medium"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                )}
+
+                {sound.kind === "ready" && (
+                  <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 sm:p-8">
+                    <div className="flex flex-col items-center gap-6 sm:flex-row">
+                      <button
+                        type="button"
+                        onClick={togglePlay}
+                        className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition hover:scale-105"
+                      >
+                        {isPlaying ? (
+                          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="6" y="4" width="4" height="16" />
+                            <rect x="14" y="4" width="4" height="16" />
+                          </svg>
+                        ) : (
+                          <svg className="ml-1 h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        )}
+                      </button>
+                      <div className="min-w-0 flex-1 text-center sm:text-left">
+                        <p className="font-display text-lg text-foreground">
+                          {archetypeName} — Soul Sound
+                        </p>
+                        <p className="text-sm text-foreground/60">
+                          {sound.duration
+                            ? `${Math.round(sound.duration)} seconds`
+                            : "An original composition inspired by your archetype"}
+                        </p>
+                      </div>
+                      <div className="shrink-0">
+                        <button
+                          type="button"
+                          onClick={handleDownload}
+                          className="btn-ghost rounded-full px-6 py-2 text-sm font-medium"
+                        >
+                          {downloadMode === "open"
+                            ? "Open / Download Soul Sound"
+                            : "Download Soul Sound"}
+                        </button>
+                      </div>
+                    </div>
+                    <audio
+                      ref={audioRef}
+                      key={sound.audioUrl}
+                      src={sound.audioUrl}
+                      loop={false}
+                      className="mt-6 w-full"
+                      controls
+                      onEnded={handleEnded}
+                      onPlay={() => setIsPlaying(true)}
+                      onPause={() => setIsPlaying(false)}
+                    />
+                    {downloadMode === "open" && (
+                      <p className="mt-4 text-center text-xs text-foreground/50">
+                        If it opens in a new tab, use your browser’s download option.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             </article>
           </section>
@@ -508,15 +571,12 @@ function Results() {
               <p className="font-display text-4xl leading-tight text-foreground sm:text-5xl md:text-6xl">
                 There's More to Discover
               </p>
-              <div className="mx-auto mt-6 max-w-xl space-y-1 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                <p>Some parts of us reveal themselves immediately.</p>
-                <p>Others become clearer as we continue looking.</p>
-                <p>Your archetype is only the beginning.</p>
-              </div>
+              <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                Your archetype is the beginning. These deeper reflections are waiting when you’re ready to continue.
+              </p>
             </div>
 
             <div className="mt-12 grid gap-5 sm:grid-cols-2">
-              {/* Emotional Blueprint */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
                 <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
                 <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
@@ -527,7 +587,6 @@ function Results() {
                 </p>
               </article>
 
-              {/* Creative Nature */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
                 <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
                 <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
@@ -538,7 +597,6 @@ function Results() {
                 </p>
               </article>
 
-              {/* Relationships */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
                 <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
                 <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
@@ -549,7 +607,6 @@ function Results() {
                 </p>
               </article>
 
-              {/* Growth */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
                 <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
                 <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
@@ -560,126 +617,15 @@ function Results() {
                 </p>
               </article>
             </div>
-          </section>
-        </div>
 
-        {/* === SOUL SOUND TESTING === */}
-        <div
-          className={`transition-all duration-1000 ease-out ${
-            phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          <section id="soul-sound-section" className="mt-28 sm:mt-36">
-            <div className="text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                Original Composition
-              </p>
-              <p className="font-display mt-4 text-3xl text-foreground sm:text-4xl">
-                Your Soul Sound
-              </p>
-              <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-foreground/60">
-                An original piece of music inspired by the rhythm and emotion of your archetype.
-              </p>
-            </div>
-
-            <div className="mt-12">
-              {sound.kind === "idle" && (
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={handleGenerate}
-                    disabled={!promptText}
-                    className="btn-primary rounded-full px-8 py-3 text-sm font-medium disabled:opacity-50"
-                  >
-                    Generate My Soul Sound
-                  </button>
-                </div>
-              )}
-
-              {sound.kind === "loading" && (
-                <div className="flex flex-col items-center justify-center py-16">
-                  <div className="relative h-12 w-12">
-                    <div className="absolute inset-0 rounded-full border-2 border-foreground/10" />
-                    <div className="absolute inset-0 rounded-full border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin" />
-                  </div>
-                  <p className="mt-6 text-sm text-muted-foreground">
-                    Composing your original Soul Sound...
-                  </p>
-                </div>
-              )}
-
-              {sound.kind === "error" && (
-                <div className="text-center py-12">
-                  <p className="text-sm text-foreground/70">{sound.message}</p>
-                  <button
-                    type="button"
-                    onClick={handleGenerate}
-                    className="btn-primary mt-6 rounded-full px-8 py-3 text-sm font-medium"
-                  >
-                    Try Again
-                  </button>
-                </div>
-              )}
-
-              {sound.kind === "ready" && (
-                <div className="glass-card-warm rounded-2xl p-6 sm:p-8">
-                  <div className="flex flex-col items-center gap-6 sm:flex-row">
-                    <button
-                      type="button"
-                      onClick={togglePlay}
-                      className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition hover:scale-105"
-                    >
-                      {isPlaying ? (
-                        <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                          <rect x="6" y="4" width="4" height="16" />
-                          <rect x="14" y="4" width="4" height="16" />
-                        </svg>
-                      ) : (
-                        <svg className="ml-1 h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      )}
-                    </button>
-                    <div className="min-w-0 flex-1 text-center sm:text-left">
-                      <p className="font-display text-lg text-foreground">
-                        {archetypeName} — Soul Sound
-                      </p>
-                      <p className="text-sm text-foreground/60">
-                        {sound.duration
-                          ? `${Math.round(sound.duration)} seconds`
-                          : "An original composition inspired by your archetype"}
-                      </p>
-                    </div>
-                    <div className="shrink-0">
-                      <button
-                        type="button"
-                        onClick={handleDownload}
-                        className="btn-ghost rounded-full px-6 py-2 text-sm font-medium"
-                      >
-                        {downloadMode === "open"
-                          ? "Open / Download Soul Sound"
-                          : "Download Soul Sound"}
-                      </button>
-                    </div>
-                  </div>
-                  <audio
-                    ref={audioRef}
-                    key={sound.audioUrl}
-                    src={sound.audioUrl}
-                    loop={false}
-                    className="mt-6 w-full"
-                    controls
-                    onEnded={handleEnded}
-                    onPlay={() => setIsPlaying(true)}
-                    onPause={() => setIsPlaying(false)}
-                  />
-                  {downloadMode === "open" && (
-                    <p className="mt-4 text-center text-xs text-foreground/50">
-                      If it opens in a new tab, use your browser’s download option.
-                    </p>
-                  )}
-                </div>
-              )}
+            <div className="mt-12 text-center">
+              <button
+                type="button"
+                disabled
+                className="rounded-full border border-foreground/15 bg-foreground/[0.03] px-8 py-3 text-sm font-medium text-foreground/60 transition hover:border-foreground/25 hover:text-foreground/80 disabled:cursor-default"
+              >
+                Continue Discovering
+              </button>
             </div>
           </section>
         </div>
