@@ -568,7 +568,7 @@ function Results() {
                 )}
 
                 {sound.kind === "ready" && (
-                  <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 sm:p-8">
+                  <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 sm:p-8 animate-fade-up">
                     <div className="flex flex-col items-center gap-6 sm:flex-row">
                       <button
                         type="button"
