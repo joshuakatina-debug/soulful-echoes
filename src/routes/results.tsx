@@ -480,7 +480,7 @@ function Results() {
             phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <section id="soul-sound-section" className="mt-24 sm:mt-32">
+          <section id="soul-sound-section" ref={soundSectionRef} className="mt-24 sm:mt-32">
             <article className="relative overflow-hidden rounded-[2rem] border border-foreground/[0.10] bg-foreground/[0.03] px-6 py-14 backdrop-blur-sm sm:px-14 sm:py-20">
               <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.10] blur-3xl" />
               <div className="pointer-events-none absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.10] blur-3xl" />
