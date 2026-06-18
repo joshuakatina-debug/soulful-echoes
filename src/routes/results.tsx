@@ -10,6 +10,7 @@ import {
 import type { FlavorOption } from "@/data/flavorMappings";
 import { supabase } from "@/integrations/supabase/client";
 import { CalmBlank } from "@/components/CalmBlank";
+import { analytics } from "@/lib/analytics";
 
 
 const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
