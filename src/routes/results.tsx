@@ -318,21 +318,11 @@ function Results() {
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
-  if (!resultReady) {
-    return (
-      <main className="bg-night relative flex min-h-screen items-center justify-center overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 left-1/3 h-[28rem] w-[28rem] rounded-full bg-[oklch(0.82_0.13_85)] opacity-15 blur-3xl animate-float-slow" />
-          <div
-            className="absolute bottom-0 right-0 h-[30rem] w-[30rem] rounded-full bg-[oklch(0.55_0.18_305)] opacity-20 blur-3xl animate-float-slow"
-            style={{ animationDelay: "-7s" }}
-          />
-        </div>
-      </main>
-    );
-  }
+  if (!resultReady || !result || !content) {
+    if (!showFallback) {
+      return <CalmBlank />;
+    }
 
-  if (!result || !content) {
     return (
       <main className="bg-night relative min-h-screen overflow-hidden">
         <div className="relative z-10 mx-auto max-w-2xl px-6 py-24 text-center">
@@ -349,6 +339,7 @@ function Results() {
       </main>
     );
   }
+
 
   const archetypeName = result.bestMatch.displayName;
 
