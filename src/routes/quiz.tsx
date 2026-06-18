@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { questions } from "@/lib/quiz-data";
+import { analytics } from "@/lib/analytics";
 
 export const Route = createFileRoute("/quiz")({
   head: () => ({
