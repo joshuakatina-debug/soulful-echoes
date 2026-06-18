@@ -218,6 +218,11 @@ function Results() {
     };
   }, []);
 
+  // Fire results_viewed once when results page mounts.
+  useEffect(() => {
+    analytics.resultsViewed();
+  }, []);
+
   // Reveal sequence
   useEffect(() => {
     const timers = [
