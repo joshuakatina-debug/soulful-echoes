@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { questions } from "@/lib/quiz-data";
 import { computeSoulResult, saveSoulResult } from "@/lib/soul-result";
+import { analytics } from "@/lib/analytics";
+import type { FlavorOption } from "@/data/flavorMappings";
 
 export const Route = createFileRoute("/calculating")({
   head: () => ({
