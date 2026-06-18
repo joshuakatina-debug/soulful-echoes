@@ -1,4 +1,10 @@
+// deno-lint-ignore-file no-explicit-any
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+
 interface GenerateRequest {
+  session_id?: string;
+  archetype_id?: string;
+  archetype_name?: string;
   promptText: string;
   shortPrompt?: string;
 }
@@ -11,6 +17,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Content-Type": "application/json",
 };
+
+function admin() {
+  return createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -25,7 +39,16 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const { promptText, shortPrompt } = (await req.json()) as GenerateRequest;
+    const body = (await req.json()) as GenerateRequest;
+    const { session_id, archetype_id, archetype_name, promptText, shortPrompt } = body;
+
+    if (!session_id) {
+      return new Response(JSON.stringify({ error: "Missing session_id" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
+    }
+
     const source = (shortPrompt ?? promptText ?? "").toString();
     if (!source) {
       return new Response(JSON.stringify({ error: "Missing prompt" }), {
@@ -34,11 +57,59 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    const db = admin();
+
+    // ---- GUARD RAIL: never start a 2nd MusicAPI job for the same session ----
+    const { data: existing, error: lookupErr } = await db
+      .from("soul_sounds")
+      .select(
+        "session_id, status, task_id, audio_url, image_url, duration, title",
+      )
+      .eq("session_id", session_id)
+      .maybeSingle();
+
+    if (lookupErr) {
+      console.error("[generate] lookup error", lookupErr);
+      return new Response(
+        JSON.stringify({ error: "Database lookup failed" }),
+        { status: 500, headers: corsHeaders },
+      );
+    }
+
+    if (existing?.status === "ready" && existing.audio_url) {
+      console.log(`[generate] session ${session_id} already ready — returning stored`);
+      return new Response(
+        JSON.stringify({
+          status: "ready",
+          task_id: existing.task_id,
+          audioUrl: existing.audio_url,
+          imageUrl: existing.image_url,
+          duration: existing.duration,
+          title: existing.title,
+          cached: true,
+        }),
+        { status: 200, headers: corsHeaders },
+      );
+    }
+
+    if (existing?.task_id && existing.status === "generating") {
+      console.log(
+        `[generate] session ${session_id} already generating task ${existing.task_id} — resuming`,
+      );
+      return new Response(
+        JSON.stringify({
+          status: "generating",
+          task_id: existing.task_id,
+          resumed: true,
+        }),
+        { status: 200, headers: corsHeaders },
+      );
+    }
+
     // Safety net: enforce MusicAPI's <400 char limit on gpt_description_prompt.
-    const finalPrompt = source.length > MAX_PROMPT_LEN
-      ? source.slice(0, MAX_PROMPT_LEN)
-      : source;
-    console.log(`MusicAPI prompt length: ${finalPrompt.length}`);
+    const finalPrompt =
+      source.length > MAX_PROMPT_LEN ? source.slice(0, MAX_PROMPT_LEN) : source;
+    console.log(`[generate] MusicAPI prompt length: ${finalPrompt.length}`);
 
     const musicApiKey = Deno.env.get("MUSICAPI_KEY");
     if (!musicApiKey) {
@@ -73,9 +144,6 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log("[create] full response:", JSON.stringify(data));
-
-    // MusicAPI may return task_id at top level or nested under data
     const taskId =
       data?.task_id ??
       data?.data?.task_id ??
@@ -83,7 +151,7 @@ Deno.serve(async (req: Request) => {
       data?.data?.id ??
       null;
 
-    console.log(`[create] task_id=${taskId}`);
+    console.log(`[generate] task_id=${taskId} session=${session_id}`);
 
     if (!taskId) {
       console.error("MusicAPI response missing task_id", JSON.stringify(data));
@@ -93,10 +161,29 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    return new Response(JSON.stringify({ task_id: taskId }), {
-      status: 200,
-      headers: corsHeaders,
-    });
+    // Persist the generation as in-flight so a refresh cannot start a second one.
+    const { error: upsertErr } = await db.from("soul_sounds").upsert(
+      {
+        session_id,
+        archetype_id: archetype_id ?? existing?.archetype_id ?? null,
+        archetype_name: archetype_name ?? existing?.archetype_name ?? null,
+        prompt_text: promptText ?? null,
+        short_prompt: shortPrompt ?? null,
+        task_id: taskId,
+        status: "generating",
+        error_message: null,
+      },
+      { onConflict: "session_id" },
+    );
+    if (upsertErr) {
+      console.error("[generate] upsert error", upsertErr);
+      // Don't fail the request — generation is already in flight upstream.
+    }
+
+    return new Response(
+      JSON.stringify({ status: "generating", task_id: taskId }),
+      { status: 200, headers: corsHeaders },
+    );
   } catch (error) {
     console.error("generate-soul-sound error:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
