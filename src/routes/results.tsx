@@ -319,25 +319,7 @@ function Results() {
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
   if (!resultReady || !result || !content) {
-    if (!showFallback) {
-      return <CalmBlank />;
-    }
-
-    return (
-      <main className="bg-night relative min-h-screen overflow-hidden">
-        <div className="relative z-10 mx-auto max-w-2xl px-6 py-24 text-center">
-          <p className="font-display text-2xl text-foreground/80">
-            Your soul result is not ready yet.
-          </p>
-          <Link
-            to="/quiz"
-            className="btn-primary mt-8 inline-block rounded-full px-8 py-3 text-sm font-medium"
-          >
-            Take the quiz
-          </Link>
-        </div>
-      </main>
-    );
+    return <CalmBlank />;
   }
 
 
