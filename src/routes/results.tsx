@@ -133,15 +133,22 @@ function Results() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
   const [isPaid, setIsPaid] = useState(false);
+  const [autoGenerate, setAutoGenerate] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
+  const soundSectionRef = useRef<HTMLElement | null>(null);
+  const autoStartedRef = useRef(false);
 
   useEffect(() => {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
     try {
       setIsPaid(localStorage.getItem("soulSoundsPaid") === "true");
+      if (localStorage.getItem("soulSoundsAutoGenerate") === "true") {
+        setAutoGenerate(true);
+        localStorage.removeItem("soulSoundsAutoGenerate");
+      }
     } catch (_) {
       // ignore
     }
