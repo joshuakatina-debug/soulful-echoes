@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CalmBlank } from "../components/CalmBlank";
 import { GoogleAnalytics } from "../components/GoogleAnalytics";
+import { MicrosoftClarity } from "../components/MicrosoftClarity";
 
 const GA_MEASUREMENT_ID = "G-H47NSB1E2H";
 
@@ -152,6 +153,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <GoogleAnalytics />
+      <MicrosoftClarity />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
