@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      soul_sounds: {
+        Row: {
+          archetype_id: string | null
+          archetype_name: string | null
+          audio_url: string | null
+          created_at: string
+          duration: number | null
+          error_message: string | null
+          image_url: string | null
+          prompt_text: string | null
+          session_id: string
+          short_prompt: string | null
+          status: string
+          task_id: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          archetype_id?: string | null
+          archetype_name?: string | null
+          audio_url?: string | null
+          created_at?: string
+          duration?: number | null
+          error_message?: string | null
+          image_url?: string | null
+          prompt_text?: string | null
+          session_id: string
+          short_prompt?: string | null
+          status?: string
+          task_id?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          archetype_id?: string | null
+          archetype_name?: string | null
+          audio_url?: string | null
+          created_at?: string
+          duration?: number | null
+          error_message?: string | null
+          image_url?: string | null
+          prompt_text?: string | null
+          session_id?: string
+          short_prompt?: string | null
+          status?: string
+          task_id?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
