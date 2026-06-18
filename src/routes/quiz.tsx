@@ -46,7 +46,7 @@ function Quiz() {
   const selected = answers[current.id];
 
   function select(value: string) {
-    if (current.id === 1) analytics.quizStarted();
+    if (step === 0) analytics.quizStarted();
     setAnswers((a) => ({ ...a, [current.id]: value }));
   }
 
