@@ -281,6 +281,7 @@ function Results() {
 
   async function handleGenerate() {
     if (!promptText) return;
+    if (!isPaid) return;
     setDownloadMode("download");
     setSound({ kind: "loading" });
 
@@ -466,14 +467,23 @@ function Results() {
               <div className="relative mt-12">
                 {sound.kind === "idle" && (
                   <div className="text-center">
-                    <button
-                      type="button"
-                      onClick={handleGenerate}
-                      disabled={!promptText}
-                      className="btn-primary rounded-full px-10 py-4 text-sm font-medium tracking-wide disabled:opacity-50"
-                    >
-                      Create My Soul Sound
-                    </button>
+                    {isPaid ? (
+                      <button
+                        type="button"
+                        onClick={handleGenerate}
+                        disabled={!promptText}
+                        className="btn-primary rounded-full px-10 py-4 text-sm font-medium tracking-wide disabled:opacity-50"
+                      >
+                        Create My Soul Sound
+                      </button>
+                    ) : (
+                      <div className="flex flex-col items-center gap-4">
+                        <p className="mx-auto max-w-md text-sm italic text-foreground/60">
+                          Your Soul Sound is ready to be composed when you continue.
+                        </p>
+                        <ContinueDiscoveringButton />
+                      </div>
+                    )}
                   </div>
                 )}
 
