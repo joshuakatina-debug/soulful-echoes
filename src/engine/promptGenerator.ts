@@ -58,7 +58,7 @@ export function generateSoundPrompt(
 
   const foundation = promptFoundation.trim().replace(/[.!?]+$/, "");
   const flavorSentence = phrases.length
-    ? `Compose this piece ${phrases.join(", ")}.`
+    ? `Let the music move ${phrases.join(", ")}.`
     : "";
 
   return [foundation + ".", flavorSentence, PRODUCTION_RULES]
@@ -67,9 +67,9 @@ export function generateSoundPrompt(
 }
 
 /**
- * Build a SHORT music prompt (<=350 chars) for MusicAPI's
- * gpt_description_prompt field. Shortens by removing adjectives
- * rather than truncating mid-sentence.
+ * Build a SHORT music prompt (<=390 chars) for MusicAPI's
+ * gpt_description_prompt field. Keeps flavor phrases intact rather
+ * than reducing them to single words.
  */
 export function generateShortMusicPrompt(params: {
   archetypeName: string;
@@ -79,64 +79,18 @@ export function generateShortMusicPrompt(params: {
 }): string {
   const { archetypeName, coreEmotion, soulKeywords, answers } = params;
 
-  // Shorten a style phrase to its last word (e.g. "warm and intimate" -> "intimate").
-  const shortPhrase = (p: string) => {
-    const cleaned = p.replace(/[.,;]/g, "").trim();
-    const words = cleaned.split(/\s+/);
-    return words[words.length - 1] || cleaned;
-  };
-
-  const stylePhrases = ORDER
+  const phrases = ORDER
     .map((cat) => phraseFor(cat, answers[cat]))
-    .filter((p): p is string => Boolean(p))
-    .map(shortPhrase);
+    .filter((p): p is string => Boolean(p));
 
-  const MAX = 350;
-  const ENDING = "Compose as a complete short piece with a clear beginning, middle, and resolved ending. Do not fade or cut off abruptly.";
+  const keywords = soulKeywords.slice(0, 3).join(", ");
 
-  // Strip overused generic/corporate language.
-  const BANNED = /\b(cinematic|polished|corporate|inspirational|anthemic|motivational)\b/gi;
+  const base =
+    `Private instrumental soul theme for ${archetypeName}. ` +
+    `Core feeling: ${coreEmotion}. ` +
+    (keywords ? `Character: ${keywords}. ` : "") +
+    (phrases.length ? `Sound: ${phrases.slice(0, 3).join("; ")}. ` : "") +
+    `Intimate, restrained, human, handmade. Avoid corporate, stock, trailer, motivational, generic cinematic music. Natural ending.`;
 
-  const labeledStyles = ORDER
-    .map((cat) => {
-      const raw = phraseFor(cat, answers[cat]);
-      if (!raw) return null;
-      const cleaned = raw.replace(BANNED, "").replace(/\s+/g, " ").trim();
-      const short = shortPhrase(cleaned);
-      return short || null;
-    })
-    .filter((s): s is string => Boolean(s));
-
-  const cleanedKeywords = soulKeywords
-    .map((k) => k.replace(BANNED, "").trim())
-    .filter((k) => k.length > 0);
-
-  const build = (keywords: string[], styles: string[]) => {
-    const kwTop = keywords.slice(0, 3).join(", ");
-    const character = kwTop ? ` Character: ${kwTop}.` : "";
-    const sound = styles.length ? ` Sound: ${styles.join(", ")}.` : "";
-    return (
-      `Instrumental, no vocals. A personal soul theme for ${archetypeName}. ` +
-      `Core feeling: ${coreEmotion}.${character}${sound} ` +
-      `Intimate, human, emotionally specific. ${ENDING}`
-    );
-  };
-
-  let keywords = cleanedKeywords.slice(0, 3);
-  let styles = labeledStyles.slice();
-  let prompt = build(keywords, styles);
-
-  while (prompt.length > MAX && styles.length > 0) {
-    styles.pop();
-    prompt = build(keywords, styles);
-  }
-  while (prompt.length > MAX && keywords.length > 1) {
-    keywords.pop();
-    prompt = build(keywords, styles);
-  }
-
-  // Silence unused-var lint for stylePhrases (kept for backwards compat).
-  void stylePhrases;
-
-  return prompt;
+  return base.length > 390 ? base.slice(0, 387).trimEnd() + "..." : base;
 }
