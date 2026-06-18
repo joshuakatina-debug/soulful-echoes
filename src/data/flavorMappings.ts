@@ -63,7 +63,7 @@ export const flavorMappings: FlavorMappings = {
 
 /** Standard Soul Sounds production rules, appended to every prompt. */
 export const PRODUCTION_RULES =
-  "Production: fully instrumental, no vocals and no lyrics, high-fidelity studio mix, smooth and natural dynamic range, seamless arrangement approximately 2–3 minutes in length, mastered for emotional clarity and immersive, headphone-ready listening.";
+  "Production direction: fully instrumental, no vocals, no lyrics. Keep it intimate, human, restrained, and emotionally specific. Leave breathing room between phrases. Avoid corporate inspiration, motivational advertising, stock music, trailer music, generic cinematic piano, obvious crescendos, triumphant swells, and royalty-free background music. The piece should feel handmade, personal, and quietly revealing, with a natural beginning, middle, and gentle resolved ending.";
 
 /** Maps a quiz category label to its flavor mapping key. */
 export const CATEGORY_TO_FLAVOR: Record<string, FlavorCategory> = {
