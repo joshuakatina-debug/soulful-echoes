@@ -869,7 +869,10 @@ function Results() {
                       className="mt-6 w-full"
                       controls
                       onEnded={handleEnded}
-                      onPlay={() => setIsPlaying(true)}
+                      onPlay={() => {
+                        analytics.soulSoundPlayed();
+                        setIsPlaying(true);
+                      }}
                       onPause={() => setIsPlaying(false)}
                     />
                     {downloadMode === "open" && (
