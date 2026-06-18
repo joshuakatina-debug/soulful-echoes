@@ -39,9 +39,20 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const [showError, setShowError] = useState(false);
+
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowError(true), 1500);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!showError) {
+    return <CalmBlank />;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -73,6 +84,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     </div>
   );
 }
+
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
