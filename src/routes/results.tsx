@@ -9,6 +9,8 @@ import {
 } from "@/engine/promptGenerator";
 import type { FlavorOption } from "@/data/flavorMappings";
 import { supabase } from "@/integrations/supabase/client";
+import { CalmBlank } from "@/components/CalmBlank";
+
 
 const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
 const POLL_INTERVAL_MS = 15_000;
@@ -62,12 +64,60 @@ function loadFlavorAnswers(): FlavorAnswers {
   }
 }
 
+function ResultsPending() {
+  return <CalmBlank />;
+}
+
+function ResultsError({ error, reset }: { error: Error; reset: () => void }) {
+  const [showError, setShowError] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowError(true), 1500);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!showError) {
+    return <CalmBlank />;
+  }
+
+  return (
+    <CalmBlank>
+      <div className="relative z-10 mx-auto max-w-md px-6 text-center">
+        <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
+          This page didn't load
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Something went wrong on our end. You can try refreshing or head back home.
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => reset()}
+            className="btn-primary inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium"
+          >
+            Try again
+          </button>
+          <Link
+            to="/"
+            className="btn-ghost inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium"
+          >
+            Go home
+          </Link>
+        </div>
+      </div>
+    </CalmBlank>
+  );
+}
+
 export const Route = createFileRoute("/results")({
   head: () => ({
     meta: [{ title: "Your Soul Is Ready — Soul Sounds" }],
   }),
+  pendingComponent: ResultsPending,
+  errorComponent: ResultsError,
   component: Results,
 });
+
 
 function capitalize(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
@@ -79,6 +129,7 @@ function Results() {
   const [sound, setSound] = useState<SoundStatus>({ kind: "idle" });
   const [phase, setPhase] = useState(0);
   const [resultReady, setResultReady] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -89,9 +140,14 @@ function Results() {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
 
-    const t = setTimeout(() => setResultReady(true), 250);
-    return () => clearTimeout(t);
+    const readyT = setTimeout(() => setResultReady(true), 250);
+    const fallbackT = setTimeout(() => setShowFallback(true), 3000);
+    return () => {
+      clearTimeout(readyT);
+      clearTimeout(fallbackT);
+    };
   }, []);
+
 
   useEffect(() => {
     return () => {
@@ -262,21 +318,11 @@ function Results() {
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
-  if (!resultReady) {
-    return (
-      <main className="bg-night relative flex min-h-screen items-center justify-center overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 left-1/3 h-[28rem] w-[28rem] rounded-full bg-[oklch(0.82_0.13_85)] opacity-15 blur-3xl animate-float-slow" />
-          <div
-            className="absolute bottom-0 right-0 h-[30rem] w-[30rem] rounded-full bg-[oklch(0.55_0.18_305)] opacity-20 blur-3xl animate-float-slow"
-            style={{ animationDelay: "-7s" }}
-          />
-        </div>
-      </main>
-    );
-  }
+  if (!resultReady || !result || !content) {
+    if (!showFallback) {
+      return <CalmBlank />;
+    }
 
-  if (!result || !content) {
     return (
       <main className="bg-night relative min-h-screen overflow-hidden">
         <div className="relative z-10 mx-auto max-w-2xl px-6 py-24 text-center">
@@ -293,6 +339,7 @@ function Results() {
       </main>
     );
   }
+
 
   const archetypeName = result.bestMatch.displayName;
 
