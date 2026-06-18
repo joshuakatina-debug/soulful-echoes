@@ -441,6 +441,25 @@ function Results() {
           return;
         }
         if (data?.exists) {
+          // Reconstruct the result from the DB record when local state is
+          // missing (e.g. user returns on a new browser/device). archetype_id
+          // is the only identifier we need — all reveal copy is keyed by it.
+          if (data.archetypeId && archetypeContent[data.archetypeId]) {
+            setResult((prev) =>
+              prev ?? {
+                scores: { energy: 0, focus: 0, thinking: 0, structure: 0, risk: 0, influence: 0 },
+                bestMatch: {
+                  id: data.archetypeId,
+                  displayName: data.archetypeName ?? data.archetypeId,
+                  distance: 0,
+                },
+                secondMatch: null,
+                thirdMatch: null,
+                totalScore: 0,
+                computedAt: new Date().toISOString(),
+              },
+            );
+          }
           if (data.status === "ready" && data.audioUrl) {
             setRecordExists(true);
             setSound({
@@ -463,6 +482,7 @@ function Results() {
           // If status === "failed", leave recordExists=false so the user can
           // retry exactly once via the Try Again button.
         }
+
       } catch (e) {
         console.error("get-soul-sound exception", e);
       } finally {
