@@ -284,6 +284,7 @@ function Results() {
 
   async function handleDownload() {
     if (sound.kind !== "ready") return;
+    analytics.soulSoundDownloaded();
     if (downloadMode === "open") {
       window.open(sound.audioUrl, "_blank", "noopener,noreferrer");
       return;
