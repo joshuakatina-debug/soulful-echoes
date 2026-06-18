@@ -619,13 +619,7 @@ function Results() {
             </div>
 
             <div className="mt-12 text-center">
-              <button
-                type="button"
-                disabled
-                className="rounded-full border border-foreground/15 bg-foreground/[0.03] px-8 py-3 text-sm font-medium text-foreground/60 transition hover:border-foreground/25 hover:text-foreground/80 disabled:cursor-default"
-              >
-                Continue Discovering
-              </button>
+              <ContinueDiscoveringButton />
             </div>
           </section>
         </div>
