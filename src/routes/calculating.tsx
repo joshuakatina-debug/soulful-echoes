@@ -71,7 +71,7 @@ function Calculating() {
             ready ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
-          Analysis Complete
+          We noticed a pattern.
         </h1>
 
         <p
@@ -79,9 +79,9 @@ function Calculating() {
             ready ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
-          We’ve finished listening to your responses.
+          Your responses formed a clear shape — a way you move through the world, connect with others, and carry what’s inside you.
           <br className="hidden sm:block" />{" "}
-          A clear pattern emerged — one that reflects how you move through the world, connect with others, and express what’s inside you.
+          Now we’ll give that pattern a name.
         </p>
 
         <div
