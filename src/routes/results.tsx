@@ -405,26 +405,14 @@ function Results() {
           </p>
         </div>
 
-        {/* === THERE'S MORE TO DISCOVER === */}
+        {/* === SOUL SOUND PREVIEW === */}
         <div
           className={`transition-all duration-1000 ease-out ${
             phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <section className="mt-28 sm:mt-36">
-            <div className="text-center">
-              <p className="font-display text-4xl leading-tight text-foreground sm:text-5xl md:text-6xl">
-                There's More to Discover
-              </p>
-              <div className="mx-auto mt-6 max-w-xl space-y-1 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                <p>Some parts of us reveal themselves immediately.</p>
-                <p>Others become clearer as we continue looking.</p>
-                <p>Your archetype is only the beginning.</p>
-              </div>
-            </div>
-
-            {/* Soul Sound — centerpiece */}
-            <article className="group relative mt-16 overflow-hidden rounded-3xl border border-foreground/[0.10] bg-foreground/[0.03] p-8 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.16] hover:bg-foreground/[0.05] sm:mt-20 sm:p-12">
+          <section className="mt-20 sm:mt-24">
+            <article className="group relative overflow-hidden rounded-3xl border border-foreground/[0.10] bg-foreground/[0.03] p-8 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.16] hover:bg-foreground/[0.05] sm:p-12">
               <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.08] blur-3xl" />
               <div className="pointer-events-none absolute -left-10 -bottom-10 h-48 w-48 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.08] blur-3xl" />
 
@@ -463,9 +451,42 @@ function Results() {
                   </svg>
                 </div>
               </div>
-            </article>
 
-            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+              <div className="relative mt-12 text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById("soul-sound-section");
+                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
+                >
+                  Continue Discovering
+                </button>
+              </div>
+            </article>
+          </section>
+        </div>
+
+        {/* === THERE'S MORE TO DISCOVER === */}
+        <div
+          className={`transition-all duration-1000 ease-out ${
+            phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
+          <section className="mt-28 sm:mt-36">
+            <div className="text-center">
+              <p className="font-display text-4xl leading-tight text-foreground sm:text-5xl md:text-6xl">
+                There's More to Discover
+              </p>
+              <div className="mx-auto mt-6 max-w-xl space-y-1 text-base leading-relaxed text-muted-foreground sm:text-lg">
+                <p>Some parts of us reveal themselves immediately.</p>
+                <p>Others become clearer as we continue looking.</p>
+                <p>Your archetype is only the beginning.</p>
+              </div>
+            </div>
+
+            <div className="mt-12 grid gap-5 sm:grid-cols-2">
               {/* Emotional Blueprint */}
               <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
                 <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
@@ -510,23 +531,15 @@ function Results() {
                 </p>
               </article>
             </div>
-
-
-            <div className="mt-16 text-center sm:mt-20">
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById("soul-sound-section");
-                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                className="btn-primary rounded-full px-8 py-3 text-sm font-medium"
-              >
-                Continue Discovering
-              </button>
-            </div>
           </section>
+        </div>
 
-          {/* === SOUL SOUND (TESTING) === */}
+        {/* === SOUL SOUND TESTING === */}
+        <div
+          className={`transition-all duration-1000 ease-out ${
+            phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
           <section id="soul-sound-section" className="mt-28 sm:mt-36">
             <div className="text-center">
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
@@ -641,6 +654,7 @@ function Results() {
             </div>
           </section>
         </div>
+
       </div>
     </main>
   );
