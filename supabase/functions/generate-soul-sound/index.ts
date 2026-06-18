@@ -60,7 +60,7 @@ Deno.serve(async (req: Request) => {
         custom_mode: false,
         mv: "sonic-v5",
         gpt_description_prompt: finalPrompt,
-        tags: "instrumental, cinematic, emotional, no vocals",
+        tags: "instrumental, intimate, organic, reflective, no vocals",
       }),
     });
 
