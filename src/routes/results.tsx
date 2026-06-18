@@ -133,15 +133,22 @@ function Results() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
   const [isPaid, setIsPaid] = useState(false);
+  const [autoGenerate, setAutoGenerate] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
+  const soundSectionRef = useRef<HTMLElement | null>(null);
+  const autoStartedRef = useRef(false);
 
   useEffect(() => {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
     try {
       setIsPaid(localStorage.getItem("soulSoundsPaid") === "true");
+      if (localStorage.getItem("soulSoundsAutoGenerate") === "true") {
+        setAutoGenerate(true);
+        localStorage.removeItem("soulSoundsAutoGenerate");
+      }
     } catch (_) {
       // ignore
     }
@@ -322,6 +329,32 @@ function Results() {
     }
   }
 
+  // Auto-start generation when the user just completed payment.
+  useEffect(() => {
+    if (!autoGenerate) return;
+    if (!isPaid) return;
+    if (!promptText) return;
+    if (autoStartedRef.current) return;
+    if (sound.kind !== "idle") return;
+    autoStartedRef.current = true;
+    const t = setTimeout(() => {
+      void handleGenerate();
+      // gently bring the composition surface into view
+      soundSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 600);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoGenerate, isPaid, promptText, sound.kind]);
+
+  // Auto-scroll into the finished player when the sound is ready.
+  useEffect(() => {
+    if (sound.kind !== "ready") return;
+    const t = setTimeout(() => {
+      soundSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 200);
+    return () => clearTimeout(t);
+  }, [sound.kind]);
+
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
@@ -447,7 +480,7 @@ function Results() {
             phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <section id="soul-sound-section" className="mt-24 sm:mt-32">
+          <section id="soul-sound-section" ref={soundSectionRef} className="mt-24 sm:mt-32">
             <article className="relative overflow-hidden rounded-[2rem] border border-foreground/[0.10] bg-foreground/[0.03] px-6 py-14 backdrop-blur-sm sm:px-14 sm:py-20">
               <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.10] blur-3xl" />
               <div className="pointer-events-none absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.10] blur-3xl" />
@@ -474,7 +507,7 @@ function Results() {
                         disabled={!promptText}
                         className="btn-primary rounded-full px-10 py-4 text-sm font-medium tracking-wide disabled:opacity-50"
                       >
-                        Create My Soul Sound
+                        Generate Your Soul Sound
                       </button>
                     ) : (
                       <div className="flex flex-col items-center gap-4">
@@ -488,13 +521,35 @@ function Results() {
                 )}
 
                 {sound.kind === "loading" && (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <div className="relative h-12 w-12">
-                      <div className="absolute inset-0 rounded-full border-2 border-foreground/10" />
-                      <div className="absolute inset-0 rounded-full border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                  <div className="flex flex-col items-center justify-center px-4 py-14 text-center animate-fade-up">
+                    {/* Gentle pulsing waveform */}
+                    <div
+                      className="flex h-16 items-center justify-center gap-1.5"
+                      aria-hidden="true"
+                    >
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                        <span
+                          key={i}
+                          className="block w-1.5 rounded-full bg-[oklch(0.82_0.13_85)]/70 animate-wave"
+                          style={{
+                            height: `${20 + (i % 3) * 14}px`,
+                            animationDelay: `${i * 0.12}s`,
+                          }}
+                        />
+                      ))}
                     </div>
-                    <p className="mt-6 text-sm italic text-muted-foreground">
-                      Listening for your rhythm...
+
+                    <h3 className="font-display mt-8 text-2xl text-foreground sm:text-3xl">
+                      Composing your Soul Sound
+                    </h3>
+                    <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-foreground/75 sm:text-base">
+                      Every Soul Sound is created uniquely for the person who inspired it.
+                    </p>
+                    <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-foreground/65 sm:text-base">
+                      We're translating your archetype into rhythm, emotion, and atmosphere.
+                    </p>
+                    <p className="mt-6 text-xs italic tracking-wide text-muted-foreground">
+                      This usually takes about one minute.
                     </p>
                   </div>
                 )}
@@ -513,7 +568,7 @@ function Results() {
                 )}
 
                 {sound.kind === "ready" && (
-                  <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 sm:p-8">
+                  <div className="rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 sm:p-8 animate-fade-up">
                     <div className="flex flex-col items-center gap-6 sm:flex-row">
                       <button
                         type="button"

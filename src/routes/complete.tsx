@@ -1,31 +1,33 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { CalmBlank } from "@/components/CalmBlank";
 
 export const Route = createFileRoute("/complete")({
   component: CompletePage,
   head: () => ({
     meta: [
-      { title: "Your complete reflection is ready" },
+      { title: "Your complete reflection is being prepared" },
       {
         name: "description",
         content:
-          "Thank you for supporting Soul Sounds. Continue into the full experience.",
+          "Thank you for supporting Soul Sounds. Your complete reflection is being prepared.",
       },
     ],
   }),
 });
 
 type State =
-  | { kind: "loading" }
-  | { kind: "paid" }
+  | { kind: "verifying" }
   | { kind: "unpaid"; status?: string }
   | { kind: "error"; message: string };
 
+const MIN_DWELL_MS = 2400;
+
 function CompletePage() {
-  const [state, setState] = useState<State>({ kind: "loading" });
+  const navigate = useNavigate();
+  const [state, setState] = useState<State>({ kind: "verifying" });
+  const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -37,6 +39,8 @@ function CompletePage() {
     }
 
     let cancelled = false;
+    const startedAt = Date.now();
+
     (async () => {
       try {
         const { data, error } = await supabase.functions.invoke(
@@ -51,10 +55,17 @@ function CompletePage() {
         if (data?.payment_status === "paid") {
           try {
             localStorage.setItem("soulSoundsPaid", "true");
+            localStorage.setItem("soulSoundsAutoGenerate", "true");
           } catch (_) {
             // ignore
           }
-          setState({ kind: "paid" });
+          const elapsed = Date.now() - startedAt;
+          const wait = Math.max(0, MIN_DWELL_MS - elapsed);
+          setTimeout(() => {
+            if (cancelled) return;
+            setLeaving(true);
+            setTimeout(() => navigate({ to: "/results" }), 600);
+          }, wait);
         } else {
           setState({ kind: "unpaid", status: data?.payment_status });
         }
@@ -70,32 +81,52 @@ function CompletePage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [navigate]);
 
-  if (state.kind === "loading") return <CalmBlank />;
+  if (state.kind === "verifying") {
+    return (
+      <main
+        className={`bg-night relative flex min-h-screen items-center justify-center overflow-hidden px-6 transition-opacity duration-[600ms] ease-out ${
+          leaving ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-[45%] h-[24rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.08] blur-3xl animate-breathe" />
+          <div
+            className="absolute left-[60%] top-[55%] h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.06] blur-3xl animate-breathe"
+            style={{ animationDelay: "-3s" }}
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-xl text-center animate-fade-up">
+          <div className="mb-12 flex justify-center">
+            <div className="relative h-3 w-3">
+              <div className="absolute inset-0 rounded-full bg-[oklch(0.82_0.13_85)] opacity-60 animate-breathe" />
+              <div
+                className="absolute -inset-2 rounded-full border border-[oklch(0.82_0.13_85/0.25)] animate-breathe"
+                style={{ animationDelay: "-1.5s" }}
+              />
+            </div>
+          </div>
+
+          <h1 className="font-display text-4xl leading-tight text-foreground sm:text-5xl">
+            Thank you.
+          </h1>
+          <p className="mt-8 text-base leading-relaxed text-foreground/70 sm:text-lg">
+            Your complete reflection is being prepared.
+          </p>
+          <p className="mt-3 text-sm italic text-muted-foreground">
+            This should only take a moment.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_oklch(0.55_0.18_305/0.12),_transparent_60%)]" />
       <div className="relative mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-6 py-24 text-center">
-        {state.kind === "paid" && (
-          <>
-            <h1 className="font-display text-4xl leading-tight text-foreground sm:text-5xl">
-              Your complete reflection is ready.
-            </h1>
-            <p className="mt-6 text-base leading-relaxed text-foreground/70 sm:text-lg">
-              Thank you for supporting Soul Sounds. Continue into the full
-              experience.
-            </p>
-            <Link
-              to="/results"
-              className="mt-10 rounded-full border border-foreground/20 bg-foreground/[0.04] px-8 py-3 text-sm font-medium text-foreground transition hover:border-foreground/40 hover:bg-foreground/[0.08]"
-            >
-              Continue
-            </Link>
-          </>
-        )}
-
         {state.kind === "unpaid" && (
           <>
             <h1 className="font-display text-3xl text-foreground sm:text-4xl">
