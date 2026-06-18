@@ -329,6 +329,32 @@ function Results() {
     }
   }
 
+  // Auto-start generation when the user just completed payment.
+  useEffect(() => {
+    if (!autoGenerate) return;
+    if (!isPaid) return;
+    if (!promptText) return;
+    if (autoStartedRef.current) return;
+    if (sound.kind !== "idle") return;
+    autoStartedRef.current = true;
+    const t = setTimeout(() => {
+      void handleGenerate();
+      // gently bring the composition surface into view
+      soundSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 600);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoGenerate, isPaid, promptText, sound.kind]);
+
+  // Auto-scroll into the finished player when the sound is ready.
+  useEffect(() => {
+    if (sound.kind !== "ready") return;
+    const t = setTimeout(() => {
+      soundSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 200);
+    return () => clearTimeout(t);
+  }, [sound.kind]);
+
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
