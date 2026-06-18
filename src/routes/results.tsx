@@ -281,10 +281,24 @@ function Results() {
     }
   }
 
-  async function pollOnce(taskId: string) {
+  function persistReadyLocally(sid: string | null, payload: {
+    audioUrl: string;
+    imageUrl?: string | null;
+    duration?: number | null;
+    title?: string | null;
+  }) {
+    if (!sid) return;
+    try {
+      localStorage.setItem(`soulSound:${sid}`, JSON.stringify(payload));
+    } catch {
+      // ignore
+    }
+  }
+
+  async function pollOnce(taskId: string, sid: string | null) {
     try {
       const { data, error } = await supabase.functions.invoke("check-soul-sound-status", {
-        body: { task_id: taskId },
+        body: { task_id: taskId, session_id: sid },
       });
       if (error) {
         console.error("status invoke error", error);
@@ -294,11 +308,19 @@ function Results() {
       const audioUrl = (data?.audioUrl as string | undefined) ?? null;
       if (audioUrl) {
         stopPolling();
-        setSound({
-          kind: "ready",
+        const ready = {
+          kind: "ready" as const,
           audioUrl,
           imageUrl: data?.imageUrl ?? null,
           duration: data?.duration ? Number(data.duration) : null,
+        };
+        setSound(ready);
+        setRecordExists(true);
+        persistReadyLocally(sid, {
+          audioUrl,
+          imageUrl: data?.imageUrl ?? null,
+          duration: data?.duration ? Number(data.duration) : null,
+          title: data?.title ?? null,
         });
         return;
       }
@@ -314,18 +336,44 @@ function Results() {
     }
   }
 
+  function startPolling(taskId: string, sid: string | null) {
+    stopPolling();
+    void pollOnce(taskId, sid);
+    pollTimerRef.current = window.setInterval(
+      () => pollOnce(taskId, sid),
+      POLL_INTERVAL_MS,
+    );
+    timeoutTimerRef.current = window.setTimeout(() => {
+      stopPolling();
+      setSound((prev) =>
+        prev.kind === "ready"
+          ? prev
+          : {
+              kind: "error",
+              message: "Your Soul Sound needs a little more time. Please try again.",
+            },
+      );
+    }, POLL_TIMEOUT_MS);
+  }
+
   async function handleGenerate() {
     if (!promptText) return;
     if (!isPaid) return;
+    if (!sessionId) return;
     setDownloadMode("download");
     setSound({ kind: "loading" });
 
     try {
-      console.log(`Short MusicAPI prompt length: ${shortPrompt.length}`);
       const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
-        body: { promptText, shortPrompt },
+        body: {
+          session_id: sessionId,
+          archetype_id: result?.bestMatch.id ?? null,
+          archetype_name: result?.bestMatch.displayName ?? null,
+          promptText,
+          shortPrompt,
+        },
       });
-      if (error || !data?.task_id) {
+      if (error) {
         console.error("generate invoke error", error, data);
         setSound({
           kind: "error",
@@ -333,21 +381,35 @@ function Results() {
         });
         return;
       }
-      const taskId: string = data.task_id;
 
-      void pollOnce(taskId);
-      pollTimerRef.current = window.setInterval(() => pollOnce(taskId), POLL_INTERVAL_MS);
-      timeoutTimerRef.current = window.setTimeout(() => {
-        stopPolling();
-        setSound((prev) =>
-          prev.kind === "ready"
-            ? prev
-            : {
-                kind: "error",
-                message: "Your Soul Sound needs a little more time. Please try again.",
-              },
-        );
-      }, POLL_TIMEOUT_MS);
+      // Server may return an already-ready record (idempotent guard).
+      if (data?.status === "ready" && data?.audioUrl) {
+        setSound({
+          kind: "ready",
+          audioUrl: data.audioUrl,
+          imageUrl: data.imageUrl ?? null,
+          duration: data.duration ? Number(data.duration) : null,
+        });
+        setRecordExists(true);
+        persistReadyLocally(sessionId, {
+          audioUrl: data.audioUrl,
+          imageUrl: data.imageUrl ?? null,
+          duration: data.duration ? Number(data.duration) : null,
+          title: data.title ?? null,
+        });
+        return;
+      }
+
+      const taskId: string | undefined = data?.task_id;
+      if (!taskId) {
+        setSound({
+          kind: "error",
+          message: "Your Soul Sound needs a little more time. Please try again.",
+        });
+        return;
+      }
+      setRecordExists(true);
+      startPolling(taskId, sessionId);
     } catch (e) {
       console.error("generate error", e);
       setSound({
@@ -357,22 +419,79 @@ function Results() {
     }
   }
 
-  // Auto-start generation when the user just completed payment.
+  // Source of truth: ask the database if a Soul Sound already exists for this
+  // paid session. This runs on every page load, including refreshes and visits
+  // from new browsers/devices. If a finished sound exists we display it and
+  // never call MusicAPI. If one is in flight we resume polling its task_id.
+  useEffect(() => {
+    if (!sessionId) {
+      setLookupDone(true);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("get-soul-sound", {
+          body: { session_id: sessionId },
+        });
+        if (cancelled) return;
+        if (error) {
+          console.error("get-soul-sound error", error);
+          setLookupDone(true);
+          return;
+        }
+        if (data?.exists) {
+          setRecordExists(true);
+          if (data.status === "ready" && data.audioUrl) {
+            setSound({
+              kind: "ready",
+              audioUrl: data.audioUrl,
+              imageUrl: data.imageUrl ?? null,
+              duration: data.duration ? Number(data.duration) : null,
+            });
+            persistReadyLocally(sessionId, {
+              audioUrl: data.audioUrl,
+              imageUrl: data.imageUrl ?? null,
+              duration: data.duration ? Number(data.duration) : null,
+              title: data.title ?? null,
+            });
+          } else if (data.status === "generating" && data.taskId) {
+            setSound({ kind: "loading" });
+            startPolling(data.taskId, sessionId);
+          }
+        }
+      } catch (e) {
+        console.error("get-soul-sound exception", e);
+      } finally {
+        if (!cancelled) setLookupDone(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId]);
+
+  // Auto-start generation when the user just completed payment AND no record
+  // exists yet for this session. Guarded by lookupDone + recordExists so we
+  // never race the DB lookup and accidentally start a duplicate job.
   useEffect(() => {
     if (!autoGenerate) return;
     if (!isPaid) return;
     if (!promptText) return;
+    if (!sessionId) return;
+    if (!lookupDone) return;
+    if (recordExists) return;
     if (autoStartedRef.current) return;
     if (sound.kind !== "idle") return;
     autoStartedRef.current = true;
     const t = setTimeout(() => {
       void handleGenerate();
-      // gently bring the composition surface into view
       soundSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 600);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoGenerate, isPaid, promptText, sound.kind]);
+  }, [autoGenerate, isPaid, promptText, sessionId, lookupDone, recordExists, sound.kind]);
 
   // Auto-scroll into the finished player when the sound is ready.
   useEffect(() => {
