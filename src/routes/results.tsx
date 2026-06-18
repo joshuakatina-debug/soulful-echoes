@@ -628,3 +628,47 @@ function Results() {
     </main>
   );
 }
+
+function ContinueDiscoveringButton() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleClick() {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "create-checkout-session",
+        {
+          body: {
+            origin: window.location.origin,
+            cancel_path: "/results",
+          },
+        },
+      );
+      if (error) throw new Error(error.message);
+      if (!data?.url) throw new Error("No checkout URL returned.");
+      window.location.href = data.url;
+    } catch (err) {
+      setError((err as Error).message ?? "Something went wrong.");
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={loading}
+        className="rounded-full border border-foreground/20 bg-foreground/[0.04] px-8 py-3 text-sm font-medium text-foreground transition hover:border-foreground/40 hover:bg-foreground/[0.08] disabled:cursor-wait disabled:opacity-60"
+      >
+        {loading ? "Opening checkout…" : "Continue Discovering"}
+      </button>
+      {error && (
+        <p className="text-xs text-foreground/60">{error}</p>
+      )}
+    </div>
+  );
+}
+
