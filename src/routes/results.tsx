@@ -129,6 +129,7 @@ function Results() {
   const [sound, setSound] = useState<SoundStatus>({ kind: "idle" });
   const [phase, setPhase] = useState(0);
   const [resultReady, setResultReady] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -139,9 +140,14 @@ function Results() {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
 
-    const t = setTimeout(() => setResultReady(true), 250);
-    return () => clearTimeout(t);
+    const readyT = setTimeout(() => setResultReady(true), 250);
+    const fallbackT = setTimeout(() => setShowFallback(true), 3000);
+    return () => {
+      clearTimeout(readyT);
+      clearTimeout(fallbackT);
+    };
   }, []);
+
 
   useEffect(() => {
     return () => {
