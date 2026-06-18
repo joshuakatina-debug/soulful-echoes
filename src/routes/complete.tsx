@@ -2,6 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { analytics } from "@/lib/analytics";
+import { loadSoulResult } from "@/lib/soul-result";
+import type { FlavorOption } from "@/data/flavorMappings";
 
 export const Route = createFileRoute("/complete")({
   component: CompletePage,
