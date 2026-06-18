@@ -507,7 +507,7 @@ function Results() {
                         disabled={!promptText}
                         className="btn-primary rounded-full px-10 py-4 text-sm font-medium tracking-wide disabled:opacity-50"
                       >
-                        Create My Soul Sound
+                        Generate Your Soul Sound
                       </button>
                     ) : (
                       <div className="flex flex-col items-center gap-4">
@@ -521,13 +521,35 @@ function Results() {
                 )}
 
                 {sound.kind === "loading" && (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <div className="relative h-12 w-12">
-                      <div className="absolute inset-0 rounded-full border-2 border-foreground/10" />
-                      <div className="absolute inset-0 rounded-full border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent animate-spin" />
+                  <div className="flex flex-col items-center justify-center px-4 py-14 text-center animate-fade-up">
+                    {/* Gentle pulsing waveform */}
+                    <div
+                      className="flex h-16 items-center justify-center gap-1.5"
+                      aria-hidden="true"
+                    >
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                        <span
+                          key={i}
+                          className="block w-1.5 rounded-full bg-[oklch(0.82_0.13_85)]/70 animate-wave"
+                          style={{
+                            height: `${20 + (i % 3) * 14}px`,
+                            animationDelay: `${i * 0.12}s`,
+                          }}
+                        />
+                      ))}
                     </div>
-                    <p className="mt-6 text-sm italic text-muted-foreground">
-                      Listening for your rhythm...
+
+                    <h3 className="font-display mt-8 text-2xl text-foreground sm:text-3xl">
+                      Composing your Soul Sound
+                    </h3>
+                    <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-foreground/75 sm:text-base">
+                      Every Soul Sound is created uniquely for the person who inspired it.
+                    </p>
+                    <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-foreground/65 sm:text-base">
+                      We're translating your archetype into rhythm, emotion, and atmosphere.
+                    </p>
+                    <p className="mt-6 text-xs italic tracking-wide text-muted-foreground">
+                      This usually takes about one minute.
                     </p>
                   </div>
                 )}
