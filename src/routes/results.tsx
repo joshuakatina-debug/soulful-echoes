@@ -441,6 +441,25 @@ function Results() {
           return;
         }
         if (data?.exists) {
+          // Reconstruct the result from the DB record when local state is
+          // missing (e.g. user returns on a new browser/device). archetype_id
+          // is the only identifier we need — all reveal copy is keyed by it.
+          if (data.archetypeId && archetypeContent[data.archetypeId]) {
+            setResult((prev) =>
+              prev ?? {
+                scores: { energy: 0, focus: 0, thinking: 0, structure: 0, risk: 0, influence: 0 },
+                bestMatch: {
+                  id: data.archetypeId,
+                  displayName: data.archetypeName ?? data.archetypeId,
+                  distance: 0,
+                },
+                secondMatch: null,
+                thirdMatch: null,
+                totalScore: 0,
+                computedAt: new Date().toISOString(),
+              },
+            );
+          }
           if (data.status === "ready" && data.audioUrl) {
             setRecordExists(true);
             setSound({
@@ -463,6 +482,7 @@ function Results() {
           // If status === "failed", leave recordExists=false so the user can
           // retry exactly once via the Try Again button.
         }
+
       } catch (e) {
         console.error("get-soul-sound exception", e);
       } finally {
@@ -508,9 +528,38 @@ function Results() {
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
-  if (!resultReady || !result || !content) {
+  // While the initial mount + DB lookup are in flight, stay on the calm
+  // blank surface. The lookup is only relevant when a sessionId exists.
+  const waitingForLookup = !!sessionId && !lookupDone;
+  if (!resultReady || waitingForLookup) {
     return <CalmBlank />;
   }
+
+  if (!result || !content) {
+    // No local quiz state, no recoverable paid record. Show a calm recovery
+    // message instead of an indefinite blank screen.
+    return (
+      <CalmBlank>
+        <div className="relative z-10 mx-auto max-w-md px-6 text-center">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            We couldn't find your reflection on this device.
+          </h1>
+          <p className="mt-4 text-sm text-foreground/65">
+            Return home to begin a new reflection, or reopen the link from your confirmation email on the device where you took the quiz.
+          </p>
+          <div className="mt-8 flex justify-center">
+            <Link
+              to="/"
+              className="btn-primary inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium"
+            >
+              Return Home
+            </Link>
+          </div>
+        </div>
+      </CalmBlank>
+    );
+  }
+
 
 
   const archetypeName = result.bestMatch.displayName;
