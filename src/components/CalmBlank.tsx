@@ -1,4 +1,6 @@
-export function CalmBlank() {
+import type { ReactNode } from "react";
+
+export function CalmBlank({ children }: { children?: ReactNode }) {
   return (
     <main className="bg-night relative flex min-h-screen items-center justify-center overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
@@ -8,6 +10,8 @@ export function CalmBlank() {
           style={{ animationDelay: "-7s" }}
         />
       </div>
+      {children}
     </main>
   );
 }
+
