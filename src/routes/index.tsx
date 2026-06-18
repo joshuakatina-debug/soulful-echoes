@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { meta } from "@/lib/meta";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,6 +23,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  useEffect(() => {
+    meta.viewContent({ contentName: "landing", contentCategory: "landing" });
+  }, []);
   return (
     <main className="bg-night relative min-h-screen overflow-hidden">
       {/* Ambient orbs */}

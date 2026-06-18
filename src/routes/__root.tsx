@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CalmBlank } from "../components/CalmBlank";
 import { GoogleAnalytics } from "../components/GoogleAnalytics";
 import { MicrosoftClarity } from "../components/MicrosoftClarity";
+import { MetaPixel } from "../components/MetaPixel";
 
 const GA_MEASUREMENT_ID = "G-H47NSB1E2H";
 
@@ -154,6 +155,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <GoogleAnalytics />
       <MicrosoftClarity />
+      <MetaPixel />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>

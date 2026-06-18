@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { analytics } from "@/lib/analytics";
+import { meta } from "@/lib/meta";
 import { loadSoulResult } from "@/lib/soul-result";
 import type { FlavorOption } from "@/data/flavorMappings";
 
@@ -88,6 +89,7 @@ function CompletePage() {
           } catch {
             analytics.purchaseCompleted({ transactionId: sessionId });
           }
+          meta.purchase({ transactionId: sessionId, value: 14.99, currency: "USD" });
           const elapsed = Date.now() - startedAt;
           const wait = Math.max(0, MIN_DWELL_MS - elapsed);
           setTimeout(() => {

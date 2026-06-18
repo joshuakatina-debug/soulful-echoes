@@ -11,6 +11,7 @@ import type { FlavorOption } from "@/data/flavorMappings";
 import { supabase } from "@/integrations/supabase/client";
 import { CalmBlank } from "@/components/CalmBlank";
 import { analytics } from "@/lib/analytics";
+import { meta } from "@/lib/meta";
 
 
 const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
@@ -221,6 +222,7 @@ function Results() {
   // Fire results_viewed once when results page mounts.
   useEffect(() => {
     analytics.resultsViewed();
+    meta.viewContent({ contentName: "results_preview", contentCategory: "results" });
   }, []);
 
   // Reveal sequence
@@ -1043,6 +1045,7 @@ function ContinueDiscoveringButton() {
       if (error) throw new Error(error.message);
       if (!data?.url) throw new Error("No checkout URL returned.");
       analytics.checkoutStarted();
+      meta.initiateCheckout();
       window.location.href = data.url;
     } catch (err) {
       setError((err as Error).message ?? "Something went wrong.");
