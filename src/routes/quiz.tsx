@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { questions } from "@/lib/quiz-data";
+import { analytics } from "@/lib/analytics";
 
 export const Route = createFileRoute("/quiz")({
   head: () => ({
@@ -45,6 +46,7 @@ function Quiz() {
   const selected = answers[current.id];
 
   function select(value: string) {
+    if (step === 0) analytics.quizStarted();
     setAnswers((a) => ({ ...a, [current.id]: value }));
   }
 

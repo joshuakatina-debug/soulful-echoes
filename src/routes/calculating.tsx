@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { questions } from "@/lib/quiz-data";
 import { computeSoulResult, saveSoulResult } from "@/lib/soul-result";
+import { analytics } from "@/lib/analytics";
+import type { FlavorOption } from "@/data/flavorMappings";
 
 export const Route = createFileRoute("/calculating")({
   head: () => ({
@@ -26,7 +28,26 @@ function Calculating() {
         questions.map((q) => [q.id, q.category]),
       );
       const result = computeSoulResult(answers, categoryLookup);
-      if (result) saveSoulResult(result);
+      if (result) {
+        saveSoulResult(result);
+        const pick = (id: number): FlavorOption | undefined => {
+          const v = answers[id];
+          return (["a", "b", "c", "d"] as const).includes(v as FlavorOption)
+            ? (v as FlavorOption)
+            : undefined;
+        };
+        analytics.quizCompleted({
+          archetypeName: result.bestMatch.displayName,
+          flavor: {
+            tempo: pick(7),
+            instrumentation: pick(8),
+            mood: pick(9),
+            warmth: pick(10),
+            atmosphere: pick(11),
+            intensity: pick(12),
+          },
+        });
+      }
     } catch {
       /* ignore — results page will fall back to placeholder */
     }

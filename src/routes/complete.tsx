@@ -2,6 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { analytics } from "@/lib/analytics";
+import { loadSoulResult } from "@/lib/soul-result";
+import type { FlavorOption } from "@/data/flavorMappings";
 
 export const Route = createFileRoute("/complete")({
   component: CompletePage,
@@ -59,6 +62,31 @@ function CompletePage() {
             localStorage.setItem("soulSoundsSessionId", sessionId);
           } catch (_) {
             // ignore
+          }
+          try {
+            const stored = loadSoulResult();
+            const raw = localStorage.getItem("soul-sounds:answers");
+            const answers: Record<string, string> = raw ? JSON.parse(raw) : {};
+            const pick = (id: number): FlavorOption | undefined => {
+              const v = answers[id];
+              return (["a", "b", "c", "d"] as const).includes(v as FlavorOption)
+                ? (v as FlavorOption)
+                : undefined;
+            };
+            analytics.purchaseCompleted({
+              transactionId: sessionId,
+              archetypeName: stored?.bestMatch.displayName ?? null,
+              flavor: {
+                tempo: pick(7),
+                instrumentation: pick(8),
+                mood: pick(9),
+                warmth: pick(10),
+                atmosphere: pick(11),
+                intensity: pick(12),
+              },
+            });
+          } catch {
+            analytics.purchaseCompleted({ transactionId: sessionId });
           }
           const elapsed = Date.now() - startedAt;
           const wait = Math.max(0, MIN_DWELL_MS - elapsed);

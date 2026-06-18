@@ -10,6 +10,7 @@ import {
 import type { FlavorOption } from "@/data/flavorMappings";
 import { supabase } from "@/integrations/supabase/client";
 import { CalmBlank } from "@/components/CalmBlank";
+import { analytics } from "@/lib/analytics";
 
 
 const ANSWERS_STORAGE_KEY = "soul-sounds:answers";
@@ -217,6 +218,11 @@ function Results() {
     };
   }, []);
 
+  // Fire results_viewed once when results page mounts.
+  useEffect(() => {
+    analytics.resultsViewed();
+  }, []);
+
   // Reveal sequence
   useEffect(() => {
     const timers = [
@@ -278,6 +284,7 @@ function Results() {
 
   async function handleDownload() {
     if (sound.kind !== "ready") return;
+    analytics.soulSoundDownloaded();
     if (downloadMode === "open") {
       window.open(sound.audioUrl, "_blank", "noopener,noreferrer");
       return;
@@ -862,7 +869,10 @@ function Results() {
                       className="mt-6 w-full"
                       controls
                       onEnded={handleEnded}
-                      onPlay={() => setIsPlaying(true)}
+                      onPlay={() => {
+                        analytics.soulSoundPlayed();
+                        setIsPlaying(true);
+                      }}
                       onPause={() => setIsPlaying(false)}
                     />
                     {downloadMode === "open" && (
@@ -1032,6 +1042,7 @@ function ContinueDiscoveringButton() {
       );
       if (error) throw new Error(error.message);
       if (!data?.url) throw new Error("No checkout URL returned.");
+      analytics.checkoutStarted();
       window.location.href = data.url;
     } catch (err) {
       setError((err as Error).message ?? "Something went wrong.");
