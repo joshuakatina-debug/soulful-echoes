@@ -43,6 +43,8 @@ Deno.serve(async function (req) {
     form.append("success_url", siteUrl + "/complete?session_id={CHECKOUT_SESSION_ID}");
     form.append("cancel_url", siteUrl + "/results");
 
+    console.log("DEBUG_ENV", { STRIPE_PRICE_ID: priceId, SITE_URL: siteUrl });
+
     const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",
       headers: {
