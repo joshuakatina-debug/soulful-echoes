@@ -6,7 +6,7 @@ import { computeSoulResult, saveSoulResult } from "@/lib/soul-result";
 export const Route = createFileRoute("/calculating")({
   head: () => ({
     meta: [
-      { title: "Analysis Complete — Soul Sounds" },
+      { title: "We noticed a pattern — Soul Sounds" },
     ],
   }),
   component: Calculating,
