@@ -12,6 +12,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CalmBlank } from "../components/CalmBlank";
+import { GoogleAnalytics } from "../components/GoogleAnalytics";
 import { MicrosoftClarity } from "../components/MicrosoftClarity";
 
 const GA_MEASUREMENT_ID = "G-H47NSB1E2H";
