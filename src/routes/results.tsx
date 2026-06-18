@@ -648,14 +648,31 @@ function Results() {
                 {sound.kind === "idle" && (
                   <div className="text-center">
                     {isPaid ? (
-                      <button
-                        type="button"
-                        onClick={handleGenerate}
-                        disabled={!promptText}
-                        className="btn-primary rounded-full px-10 py-4 text-sm font-medium tracking-wide disabled:opacity-50"
-                      >
-                        Generate Your Soul Sound
-                      </button>
+                      // After payment, never show a Generate button. We either
+                      // (a) auto-start the one-and-only generation, (b) resume
+                      // an in-flight task, or (c) display the permanent sound.
+                      // While the DB lookup is in flight, show the calm
+                      // composing surface instead of an actionable button.
+                      <div className="flex flex-col items-center justify-center px-4 py-10 text-center animate-fade-up">
+                        <div
+                          className="flex h-12 items-center justify-center gap-1.5"
+                          aria-hidden="true"
+                        >
+                          {[0, 1, 2, 3, 4].map((i) => (
+                            <span
+                              key={i}
+                              className="block w-1.5 rounded-full bg-[oklch(0.82_0.13_85)]/60 animate-wave"
+                              style={{
+                                height: `${16 + (i % 3) * 10}px`,
+                                animationDelay: `${i * 0.12}s`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <p className="mt-6 text-sm italic text-foreground/65">
+                          Preparing your Soul Sound…
+                        </p>
+                      </div>
                     ) : (
                       <div className="flex flex-col items-center gap-4">
                         <p className="mx-auto max-w-md text-sm italic text-foreground/60">
