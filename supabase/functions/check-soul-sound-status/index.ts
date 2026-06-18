@@ -48,10 +48,27 @@ Deno.serve(async (req: Request) => {
     if (session_id) {
       const { data: row } = await db
         .from("soul_sounds")
-        .select("status, audio_url, image_url, duration, title, task_id")
+        .select(
+          "status, audio_url, image_url, duration, title, task_id, email_sent_at",
+        )
         .eq("session_id", session_id)
         .maybeSingle();
       if (row?.status === "ready" && row.audio_url) {
+        // Retry delivery if it hasn't been sent yet (function is idempotent).
+        if (!row.email_sent_at) {
+          try {
+            const supaUrl = Deno.env.get("SUPABASE_URL")!;
+            const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+            fetch(`${supaUrl}/functions/v1/send-soul-sound-email`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${serviceKey}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ session_id }),
+            }).catch((e) => console.error("[status] email retry failed", e));
+          } catch (_) { /* ignore */ }
+        }
         return new Response(
           JSON.stringify({
             status: "succeeded",
@@ -142,6 +159,24 @@ Deno.serve(async (req: Request) => {
           }).eq("task_id", task_id);
       const { error: updErr } = await target;
       if (updErr) console.error("[status] persist error", updErr);
+
+      // Fire-and-forget delivery email (idempotent inside the function).
+      if (session_id) {
+        try {
+          const supaUrl = Deno.env.get("SUPABASE_URL")!;
+          const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+          fetch(`${supaUrl}/functions/v1/send-soul-sound-email`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${serviceKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ session_id }),
+          }).catch((e) => console.error("[status] email trigger failed", e));
+        } catch (e) {
+          console.error("[status] email trigger setup failed", e);
+        }
+      }
     } else if (
       state &&
       ["failed", "error", "rejected", "cancelled", "canceled"].includes(

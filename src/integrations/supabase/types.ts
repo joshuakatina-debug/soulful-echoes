@@ -20,7 +20,11 @@ export type Database = {
           archetype_name: string | null
           audio_url: string | null
           created_at: string
+          customer_email: string | null
           duration: number | null
+          email_error: string | null
+          email_sent_at: string | null
+          email_status: string | null
           error_message: string | null
           image_url: string | null
           prompt_text: string | null
@@ -36,7 +40,11 @@ export type Database = {
           archetype_name?: string | null
           audio_url?: string | null
           created_at?: string
+          customer_email?: string | null
           duration?: number | null
+          email_error?: string | null
+          email_sent_at?: string | null
+          email_status?: string | null
           error_message?: string | null
           image_url?: string | null
           prompt_text?: string | null
@@ -52,7 +60,11 @@ export type Database = {
           archetype_name?: string | null
           audio_url?: string | null
           created_at?: string
+          customer_email?: string | null
           duration?: number | null
+          email_error?: string | null
+          email_sent_at?: string | null
+          email_status?: string | null
           error_message?: string | null
           image_url?: string | null
           prompt_text?: string | null
