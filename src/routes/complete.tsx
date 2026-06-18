@@ -65,8 +65,16 @@ function CompletePage() {
           setTimeout(() => {
             if (cancelled) return;
             setLeaving(true);
-            setTimeout(() => navigate({ to: "/results" }), 600);
+            setTimeout(
+              () =>
+                navigate({
+                  to: "/results",
+                  search: { session_id: sessionId } as never,
+                }),
+              600,
+            );
           }, wait);
+
         } else {
           setState({ kind: "unpaid", status: data?.payment_status });
         }
