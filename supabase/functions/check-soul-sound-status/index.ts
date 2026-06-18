@@ -142,6 +142,24 @@ Deno.serve(async (req: Request) => {
           }).eq("task_id", task_id);
       const { error: updErr } = await target;
       if (updErr) console.error("[status] persist error", updErr);
+
+      // Fire-and-forget delivery email (idempotent inside the function).
+      if (session_id) {
+        try {
+          const supaUrl = Deno.env.get("SUPABASE_URL")!;
+          const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+          fetch(`${supaUrl}/functions/v1/send-soul-sound-email`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${serviceKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ session_id }),
+          }).catch((e) => console.error("[status] email trigger failed", e));
+        } catch (e) {
+          console.error("[status] email trigger setup failed", e);
+        }
+      }
     } else if (
       state &&
       ["failed", "error", "rejected", "cancelled", "canceled"].includes(
