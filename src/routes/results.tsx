@@ -132,6 +132,7 @@ function Results() {
   const [showFallback, setShowFallback] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
+  const [isPaid, setIsPaid] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
@@ -139,6 +140,11 @@ function Results() {
   useEffect(() => {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
+    try {
+      setIsPaid(localStorage.getItem("soulSoundsPaid") === "true");
+    } catch (_) {
+      // ignore
+    }
 
     const readyT = setTimeout(() => setResultReady(true), 250);
     const fallbackT = setTimeout(() => setShowFallback(true), 3000);
@@ -550,7 +556,7 @@ function Results() {
                     />
                     {downloadMode === "open" && (
                       <p className="mt-4 text-center text-xs text-foreground/50">
-                        If it opens in a new tab, use your browser’s download option.
+                        If it opens in a new tab, use your browser's download option.
                       </p>
                     )}
                   </div>
@@ -572,55 +578,122 @@ function Results() {
                 There's More to Discover
               </p>
               <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Your archetype is the beginning. These deeper reflections are waiting when you’re ready to continue.
+                {isPaid
+                  ? "Your complete reflection. The deeper dimensions of your archetype, revealed."
+                  : "Your archetype is the beginning. These deeper reflections are waiting when you're ready to continue."}
               </p>
             </div>
 
-            <div className="mt-12 grid gap-5 sm:grid-cols-2">
-              <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
-                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
-                  Emotional Blueprint
-                </h3>
-                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
-                  A deeper understanding of the emotional patterns that shape your life.
-                </p>
-              </article>
+            {isPaid ? (
+              <div className="mt-12 grid gap-5 sm:grid-cols-2">
+                <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm sm:p-8">
+                  <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
+                  <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
+                    Emotional Blueprint
+                  </h3>
+                  <p className="font-display relative mt-3 text-lg text-foreground/80">
+                    {content.coreEmotion}
+                  </p>
+                  <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
+                    {content.soulIdentity}
+                  </p>
+                </article>
 
-              <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
-                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
-                  Creative Nature
-                </h3>
-                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
-                  The ways you naturally create, imagine, and bring beauty into the world.
-                </p>
-              </article>
+                <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm sm:p-8">
+                  <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+                  <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
+                    Creative Nature
+                  </h3>
+                  <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
+                    {content.corePurpose}
+                  </p>
+                  <div className="relative mt-4 flex flex-wrap gap-2">
+                    {content.soulKeywords.map((k) => (
+                      <span
+                        key={k}
+                        className="rounded-full border border-foreground/10 bg-foreground/[0.03] px-3 py-1 text-xs text-foreground/70"
+                      >
+                        {capitalize(k)}
+                      </span>
+                    ))}
+                  </div>
+                </article>
 
-              <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
-                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
-                  Relationships
-                </h3>
-                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
-                  How you naturally build trust, offer care, and connect with others.
-                </p>
-              </article>
+                <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm sm:p-8">
+                  <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
+                  <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
+                    Relationships
+                  </h3>
+                  <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
+                    How others experience your presence:
+                  </p>
+                  <p className="relative mt-2 text-sm leading-relaxed text-foreground/80">
+                    {content.desiredListenerExperience}
+                  </p>
+                </article>
 
-              <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
-                <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
-                <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
-                  Growth
-                </h3>
-                <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
-                  The places where your greatest transformation often begins.
-                </p>
-              </article>
-            </div>
+                <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm sm:p-8">
+                  <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+                  <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
+                    Growth
+                  </h3>
+                  <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
+                    Your emotional journey and transformation:
+                  </p>
+                  <p className="relative mt-2 text-sm leading-relaxed text-foreground/80">
+                    {content.emotionalJourney}
+                  </p>
+                </article>
+              </div>
+            ) : (
+              <>
+                <div className="mt-12 grid gap-5 sm:grid-cols-2">
+                  <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+                    <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
+                    <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
+                      Emotional Blueprint
+                    </h3>
+                    <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
+                      A deeper understanding of the emotional patterns that shape your life.
+                    </p>
+                  </article>
 
-            <div className="mt-12 text-center">
-              <ContinueDiscoveringButton />
-            </div>
+                  <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+                    <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+                    <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
+                      Creative Nature
+                    </h3>
+                    <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
+                      The ways you naturally create, imagine, and bring beauty into the world.
+                    </p>
+                  </article>
+
+                  <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+                    <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
+                    <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
+                      Relationships
+                    </h3>
+                    <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
+                      How you naturally build trust, offer care, and connect with others.
+                    </p>
+                  </article>
+
+                  <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm transition duration-500 hover:border-foreground/[0.12] hover:bg-foreground/[0.04] sm:p-8">
+                    <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.05] blur-2xl" />
+                    <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
+                      Growth
+                    </h3>
+                    <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
+                      The places where your greatest transformation often begins.
+                    </p>
+                  </article>
+                </div>
+
+                <div className="mt-12 text-center">
+                  <ContinueDiscoveringButton />
+                </div>
+              </>
+            )}
           </section>
         </div>
 
@@ -671,4 +744,3 @@ function ContinueDiscoveringButton() {
     </div>
   );
 }
-
