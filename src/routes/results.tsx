@@ -64,12 +64,60 @@ function loadFlavorAnswers(): FlavorAnswers {
   }
 }
 
+function ResultsPending() {
+  return <CalmBlank />;
+}
+
+function ResultsError({ error, reset }: { error: Error; reset: () => void }) {
+  const [showError, setShowError] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowError(true), 1500);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!showError) {
+    return <CalmBlank />;
+  }
+
+  return (
+    <CalmBlank>
+      <div className="relative z-10 mx-auto max-w-md px-6 text-center">
+        <h1 className="font-display text-xl font-semibold tracking-tight text-foreground">
+          This page didn't load
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Something went wrong on our end. You can try refreshing or head back home.
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => reset()}
+            className="btn-primary inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium"
+          >
+            Try again
+          </button>
+          <Link
+            to="/"
+            className="btn-ghost inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium"
+          >
+            Go home
+          </Link>
+        </div>
+      </div>
+    </CalmBlank>
+  );
+}
+
 export const Route = createFileRoute("/results")({
   head: () => ({
     meta: [{ title: "Your Soul Is Ready — Soul Sounds" }],
   }),
+  pendingComponent: ResultsPending,
+  errorComponent: ResultsError,
   component: Results,
 });
+
 
 function capitalize(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
