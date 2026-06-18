@@ -1042,6 +1042,7 @@ function ContinueDiscoveringButton() {
       );
       if (error) throw new Error(error.message);
       if (!data?.url) throw new Error("No checkout URL returned.");
+      analytics.checkoutStarted();
       window.location.href = data.url;
     } catch (err) {
       setError((err as Error).message ?? "Something went wrong.");
