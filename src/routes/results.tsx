@@ -132,6 +132,7 @@ function Results() {
   const [showFallback, setShowFallback] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadMode, setDownloadMode] = useState<"download" | "open">("download");
+  const [isPaid, setIsPaid] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const timeoutTimerRef = useRef<number | null>(null);
@@ -139,6 +140,11 @@ function Results() {
   useEffect(() => {
     setResult(loadSoulResult());
     setFlavorAnswers(loadFlavorAnswers());
+    try {
+      setIsPaid(localStorage.getItem("soulSoundsPaid") === "true");
+    } catch (_) {
+      // ignore
+    }
 
     const readyT = setTimeout(() => setResultReady(true), 250);
     const fallbackT = setTimeout(() => setShowFallback(true), 3000);
