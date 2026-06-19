@@ -140,11 +140,31 @@ Deno.serve(async (req: Request) => {
     );
 
     // Persist a successful generation as PERMANENT.
+    let playableUrl: string | null = audioUrl;
     if (audioUrl) {
+      // Copy the MP3 into our private Storage bucket so it stays playable
+      // long after Suno's CDN expires the original. Fall back to the raw
+      // upstream URL only when migration fails — the row is still marked
+      // ready so the user gets *something* immediately.
+      let storedAudioUrl: string = audioUrl;
+      try {
+        const key = storageKeyFor(session_id ?? null, task_id);
+        const migrated = await migrateUpstreamToStorage(db, key, audioUrl);
+        if (migrated) {
+          storedAudioUrl = migrated;
+        } else {
+          console.warn(
+            `[status] could not migrate upstream audio to storage for task=${task_id}; persisting raw upstream URL`,
+          );
+        }
+      } catch (e) {
+        console.error("[status] storage migration error", e);
+      }
+
       const target = session_id
         ? db.from("soul_sounds").update({
             status: "ready",
-            audio_url: audioUrl,
+            audio_url: storedAudioUrl,
             image_url: imageUrl,
             duration,
             title,
@@ -153,7 +173,7 @@ Deno.serve(async (req: Request) => {
           }).eq("session_id", session_id)
         : db.from("soul_sounds").update({
             status: "ready",
-            audio_url: audioUrl,
+            audio_url: storedAudioUrl,
             image_url: imageUrl,
             duration,
             title,
@@ -161,6 +181,10 @@ Deno.serve(async (req: Request) => {
           }).eq("task_id", task_id);
       const { error: updErr } = await target;
       if (updErr) console.error("[status] persist error", updErr);
+
+      // Resolve to a fresh signed URL for the client when we stored a
+      // storage:// marker. Otherwise hand back the raw upstream URL.
+      playableUrl = (await resolveAudioUrl(db, storedAudioUrl)) ?? audioUrl;
 
       // Fire-and-forget delivery email (idempotent inside the function).
       if (session_id) {
@@ -202,7 +226,7 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         status,
-        audioUrl,
+        audioUrl: playableUrl,
         imageUrl,
         duration,
         title,
