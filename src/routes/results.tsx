@@ -401,6 +401,7 @@ function Results() {
     setSound({ kind: "loading" });
 
     try {
+      analytics.soulSoundGenerationStarted();
       const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
         body: {
           session_id: sessionId,
