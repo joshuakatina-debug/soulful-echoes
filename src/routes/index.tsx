@@ -159,7 +159,7 @@ function EmotionalPromise() {
   return (
     <section className="mx-auto max-w-3xl px-6 py-24 text-center">
       <p className="font-display animate-fade-up text-3xl leading-snug text-foreground sm:text-4xl">
-        “This isn't just AI music. It's a personal listening experience
+        “This isn't just a personality quiz. It's a personal listening experience
         designed to feel{" "}
         <span className="text-gradient italic">reflective, meaningful, and uniquely yours.</span>”
       </p>
