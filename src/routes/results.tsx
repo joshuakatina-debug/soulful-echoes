@@ -227,7 +227,7 @@ function Results() {
     resultsViewedFiredRef.current = true;
     analytics.resultsViewed({
       archetype: result.bestMatch.displayName,
-      flavor: flavorAnswers,
+      flavor: flavorAnswers as Record<string, string | undefined>,
     });
     meta.viewContent({ contentName: "results_preview", contentCategory: "results" });
   }, [result, flavorAnswers]);
