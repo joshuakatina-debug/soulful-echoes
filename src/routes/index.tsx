@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { meta } from "@/lib/meta";
+import { resetQuizProgress } from "@/lib/quiz-reset";
 
 export const Route = createFileRoute("/")({
   head: () => ({
