@@ -138,6 +138,18 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    // Feature flag: temporarily disable transactional email sending.
+    // Set EMAIL_ENABLED=true in Supabase Secrets to re-enable.
+    const emailEnabled =
+      (Deno.env.get("EMAIL_ENABLED") ?? "false").toLowerCase() === "true";
+    if (!emailEnabled) {
+      console.log("[email] skipped — EMAIL_ENABLED flag is off");
+      return new Response(
+        JSON.stringify({ skipped: true, reason: "email_disabled" }),
+        { status: 200, headers: corsHeaders },
+      );
+    }
+
     const { session_id } = (await req.json().catch(() => ({}))) as {
       session_id?: string;
     };
