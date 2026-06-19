@@ -5,14 +5,7 @@ const corsHeaders = {
   "Content-Type": "application/json"
 };
 
-const maskSecret = (value: string | undefined) => {
-  if (!value) return "missing";
-  return `${value.slice(0, 8)}...${value.slice(-4)}`;
-};
-
 Deno.serve(async function (req) {
-  console.log(`STRIPE_SECRET_KEY fingerprint: ${maskSecret(Deno.env.get("STRIPE_SECRET_KEY"))}`);
-
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
