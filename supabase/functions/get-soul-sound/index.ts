@@ -1,7 +1,22 @@
 // deno-lint-ignore-file no-explicit-any
 // Looks up the permanent Soul Sound record for a paid checkout session.
 // This is the source-of-truth read used by the client on every page load.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+//
+// Behavior:
+// - If audio_url is a `storage://` marker we mint a fresh signed URL.
+// - If audio_url is a legacy upstream URL (e.g. audiopipe.suno.ai) we try
+//   to migrate it into Storage on the fly. The upstream CDN serves an
+//   HTTP 200 with a zero-byte body once the file is expired — that case
+//   is treated as "no valid audio" and the row is downgraded to
+//   `status='expired'` so the client can trigger a fresh generation
+//   (generate-soul-sound only short-circuits on `status='ready'`).
+import {
+  adminClient,
+  isStorageUrl,
+  migrateUpstreamToStorage,
+  resolveAudioUrl,
+  storageKeyFor,
+} from "../_shared/audio-storage.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,11 +46,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const db = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-      { auth: { persistSession: false, autoRefreshToken: false } },
-    );
+    const db = adminClient();
 
     const { data, error } = await db
       .from("soul_sounds")
@@ -60,15 +71,65 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    let effectiveStatus: string = data.status;
+    let effectiveAudioUrl: string | null = data.audio_url ?? null;
+
+    // Legacy migration: copy the upstream audio into Storage on first
+    // recovery so subsequent loads (and subsequent devices) get a stable
+    // signed URL instead of an expired Suno link.
+    if (
+      effectiveStatus === "ready" &&
+      effectiveAudioUrl &&
+      !isStorageUrl(effectiveAudioUrl)
+    ) {
+      const key = storageKeyFor(data.session_id, data.task_id ?? null);
+      const migrated = await migrateUpstreamToStorage(db, key, effectiveAudioUrl);
+      if (migrated) {
+        const { error: updErr } = await db
+          .from("soul_sounds")
+          .update({ audio_url: migrated })
+          .eq("session_id", data.session_id);
+        if (updErr) {
+          console.error("[get-soul-sound] failed to persist migrated url", updErr);
+        } else {
+          console.log(
+            `[get-soul-sound] migrated legacy audio for session ${data.session_id}`,
+          );
+        }
+        effectiveAudioUrl = migrated;
+      } else {
+        // The upstream file is gone. Mark the row so the client can kick
+        // off a one-off regeneration (generate-soul-sound will not
+        // short-circuit because status !== 'ready').
+        console.warn(
+          `[get-soul-sound] legacy audio expired for session ${data.session_id}; marking as expired`,
+        );
+        const { error: updErr } = await db
+          .from("soul_sounds")
+          .update({
+            status: "expired",
+            audio_url: null,
+            task_id: null,
+            error_message: "upstream_audio_expired",
+          })
+          .eq("session_id", data.session_id);
+        if (updErr) console.error("[get-soul-sound] expire mark failed", updErr);
+        effectiveStatus = "expired";
+        effectiveAudioUrl = null;
+      }
+    }
+
+    const playable = await resolveAudioUrl(db, effectiveAudioUrl);
+
     return new Response(
       JSON.stringify({
         exists: true,
         sessionId: data.session_id,
         archetypeId: data.archetype_id,
         archetypeName: data.archetype_name,
-        status: data.status,
+        status: effectiveStatus,
         taskId: data.task_id,
-        audioUrl: data.audio_url,
+        audioUrl: playable,
         imageUrl: data.image_url,
         duration: data.duration,
         title: data.title,
