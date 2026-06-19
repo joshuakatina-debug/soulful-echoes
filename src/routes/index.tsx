@@ -100,7 +100,7 @@ function Hero() {
           onClick={() => resetQuizProgress()}
           className="btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide sm:px-12 sm:py-5 sm:text-lg"
         >
-          Start the 1-Minute Quiz
+          Click here to begin
         </Link>
         <p className="text-sm text-muted-foreground/80">
           Discover your unique sound in minutes.
