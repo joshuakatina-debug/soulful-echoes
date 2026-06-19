@@ -12,6 +12,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CalmBlank } from "../components/CalmBlank";
+import { Footer } from "../components/Footer";
 import { GoogleAnalytics } from "../components/GoogleAnalytics";
 import { MicrosoftClarity } from "../components/MicrosoftClarity";
 import { MetaPixel } from "../components/MetaPixel";
@@ -158,6 +159,7 @@ function RootComponent() {
       <MetaPixel />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <Footer />
     </QueryClientProvider>
   );
 }
