@@ -115,7 +115,7 @@ function Calculating() {
             onClick={handleReveal}
             className="btn-primary inline-flex items-center gap-3 rounded-full px-10 py-4 text-sm font-medium tracking-wide"
           >
-            Reveal My Archetype
+            Reveal My Soul Sound
             <svg
               width="16"
               height="16"
