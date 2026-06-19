@@ -227,20 +227,24 @@ Deno.serve(async (req: Request) => {
     const coreEmotion = meta?.coreEmotion ?? "";
     const coreIdentity = meta?.soulIdentity ?? "";
 
+    const playableAudioUrl =
+      (await resolveAudioUrl(db, row.audio_url, EMAIL_SIGN_SECONDS)) ??
+      row.audio_url;
+
     const resultsUrl = `${SITE_URL}/results?session_id=${encodeURIComponent(session_id)}`;
     const html = buildHtml({
       archetypeName,
       coreEmotion,
       coreIdentity,
       resultsUrl,
-      audioUrl: row.audio_url,
+      audioUrl: playableAudioUrl,
     });
     const text = buildText({
       archetypeName,
       coreEmotion,
       coreIdentity,
       resultsUrl,
-      audioUrl: row.audio_url,
+      audioUrl: playableAudioUrl,
     });
 
     const fromHeader = `Soul Sounds <${fromEmail}>`;
