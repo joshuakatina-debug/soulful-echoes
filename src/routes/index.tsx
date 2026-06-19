@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { meta } from "@/lib/meta";
+import { resetQuizProgress } from "@/lib/quiz-reset";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -63,6 +64,7 @@ function Nav() {
       </div>
       <Link
         to="/quiz"
+        onClick={() => resetQuizProgress()}
         className="btn-ghost hidden rounded-full px-5 py-2 text-sm sm:inline-flex"
       >
         Start the Quiz
@@ -100,6 +102,7 @@ function Hero() {
       >
         <Link
           to="/quiz"
+          onClick={() => resetQuizProgress()}
           className="btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide"
         >
           Start the Quiz
@@ -260,6 +263,7 @@ function FAQ() {
       <div className="mt-16 flex flex-col items-center gap-4 text-center">
         <Link
           to="/quiz"
+          onClick={() => resetQuizProgress()}
           className="btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide"
         >
           Start the Quiz
