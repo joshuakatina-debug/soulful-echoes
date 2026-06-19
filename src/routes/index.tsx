@@ -103,7 +103,7 @@ function Hero() {
           Start the 1-Minute Quiz
         </Link>
         <p className="text-sm text-muted-foreground/80">
-          No account required to begin.
+          Discover your unique sound in minutes.
         </p>
       </div>
 
