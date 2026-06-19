@@ -41,6 +41,13 @@ function Quiz() {
     } catch {}
   }, [answers, step, hydrated]);
 
+  // Fire quiz_started once when Question 1 is displayed.
+  useEffect(() => {
+    if (!hydrated) return;
+    if (step !== 0) return;
+    analytics.quizStarted();
+  }, [hydrated, step]);
+
   const total = questions.length;
   const current = questions[step];
   const selected = answers[current.id];
@@ -48,7 +55,13 @@ function Quiz() {
   function select(value: string) {
     if (step === 0) analytics.quizStarted();
     setAnswers((a) => ({ ...a, [current.id]: value }));
+    // Fire progress per answered question (deduped per question_number).
+    analytics.quizProgress({
+      questionNumber: step + 1,
+      totalQuestions: total,
+    });
   }
+
 
   function go(delta: number) {
     if (transitioning) return;

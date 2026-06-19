@@ -38,6 +38,7 @@ function Calculating() {
         };
         analytics.quizCompleted({
           archetypeName: result.bestMatch.displayName,
+          totalQuestions: questions.length,
           flavor: {
             tempo: pick(7),
             instrumentation: pick(8),

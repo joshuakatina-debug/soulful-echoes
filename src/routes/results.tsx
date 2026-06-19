@@ -219,11 +219,19 @@ function Results() {
     };
   }, []);
 
-  // Fire results_viewed once when results page mounts.
+  // Fire results_viewed once when results page mounts (with archetype/flavor when available).
+  const resultsViewedFiredRef = useRef(false);
   useEffect(() => {
-    analytics.resultsViewed();
+    if (resultsViewedFiredRef.current) return;
+    if (!result) return;
+    resultsViewedFiredRef.current = true;
+    analytics.resultsViewed({
+      archetype: result.bestMatch.displayName,
+      flavor: flavorAnswers as Record<string, string | undefined>,
+    });
     meta.viewContent({ contentName: "results_preview", contentCategory: "results" });
-  }, []);
+  }, [result, flavorAnswers]);
+
 
   // Reveal sequence
   useEffect(() => {
@@ -393,6 +401,7 @@ function Results() {
     setSound({ kind: "loading" });
 
     try {
+      analytics.soulSoundGenerationStarted();
       const { data, error } = await supabase.functions.invoke("generate-soul-sound", {
         body: {
           session_id: sessionId,
@@ -575,6 +584,15 @@ function Results() {
     }, 200);
     return () => clearTimeout(t);
   }, [sound.kind]);
+
+  // Fire soul_sound_generated once when the sound is ready (dedup handled in analytics).
+  useEffect(() => {
+    if (sound.kind !== "ready") return;
+    analytics.soulSoundGenerated({
+      archetype: result?.bestMatch.displayName ?? null,
+    });
+  }, [sound.kind, result]);
+
 
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
@@ -884,7 +902,7 @@ function Results() {
                       controls
                       onEnded={handleEnded}
                       onPlay={() => {
-                        analytics.soulSoundPlayed();
+                        analytics.soulSoundPlayed({ archetype: archetypeName });
                         setIsPlaying(true);
                       }}
                       onPause={() => setIsPlaying(false)}
