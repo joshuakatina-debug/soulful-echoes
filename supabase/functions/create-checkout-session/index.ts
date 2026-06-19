@@ -37,6 +37,7 @@ Deno.serve(async function (req) {
     }
 
     const form = new URLSearchParams();
+    form.append("payment_method_types[0]", "card");
     form.append("mode", "payment");
     form.append("line_items[0][price]", priceId);
     form.append("line_items[0][quantity]", "1");
