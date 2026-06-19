@@ -109,7 +109,7 @@ function Hero() {
 
       {/* Teaser result card — partially obscured to create curiosity */}
       <div
-        className="animate-fade-up relative mt-8 w-full max-w-xs overflow-hidden rounded-2xl"
+        className="animate-fade-up relative mt-8 w-full max-w-xs overflow-hidden rounded-2xl max-h-[148px]"
         style={{ animationDelay: "0.5s" }}
       >
         <div className="glass-card p-6 text-center opacity-50">
@@ -130,7 +130,7 @@ function Hero() {
           </div>
         </div>
         {/* Gradient fade to make the teaser feel intentionally incomplete */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent" />
       </div>
 
       <div className="hairline animate-fade-up mt-8 w-40" style={{ animationDelay: "0.6s" }} />
