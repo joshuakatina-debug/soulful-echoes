@@ -219,11 +219,19 @@ function Results() {
     };
   }, []);
 
-  // Fire results_viewed once when results page mounts.
+  // Fire results_viewed once when results page mounts (with archetype/flavor when available).
+  const resultsViewedFiredRef = useRef(false);
   useEffect(() => {
-    analytics.resultsViewed();
+    if (resultsViewedFiredRef.current) return;
+    if (!result) return;
+    resultsViewedFiredRef.current = true;
+    analytics.resultsViewed({
+      archetype: result.bestMatch.displayName,
+      flavor: flavorAnswers,
+    });
     meta.viewContent({ contentName: "results_preview", contentCategory: "results" });
-  }, []);
+  }, [result, flavorAnswers]);
+
 
   // Reveal sequence
   useEffect(() => {
