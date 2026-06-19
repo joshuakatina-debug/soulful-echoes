@@ -888,6 +888,15 @@ function Results() {
                         setIsPlaying(true);
                       }}
                       onPause={() => setIsPlaying(false)}
+                      onError={() => {
+                        console.error("audio failed to load", sound.audioUrl);
+                        setIsPlaying(false);
+                        setSound({
+                          kind: "error",
+                          message:
+                            "Your Soul Sound couldn't be loaded. Please try again.",
+                        });
+                      }}
                     />
                     {downloadMode === "open" && (
                       <p className="mt-4 text-center text-xs text-foreground/50">
