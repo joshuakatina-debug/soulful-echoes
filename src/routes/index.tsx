@@ -86,7 +86,7 @@ function Hero() {
         className="animate-fade-up mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
         style={{ animationDelay: "0.22s" }}
       >
-        Answer 12 questions to discover your Soul Archetype and hear a cinematic
+        Answer 12 questions to discover your Soul Archetype and hear an original
         piece of music inspired by who you are.
       </p>
 
