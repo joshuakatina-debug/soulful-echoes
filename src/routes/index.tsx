@@ -64,6 +64,7 @@ function Nav() {
       </div>
       <Link
         to="/quiz"
+        onClick={() => resetQuizProgress()}
         className="btn-ghost hidden rounded-full px-5 py-2 text-sm sm:inline-flex"
       >
         Start the Quiz
