@@ -585,6 +585,15 @@ function Results() {
     return () => clearTimeout(t);
   }, [sound.kind]);
 
+  // Fire soul_sound_generated once when the sound is ready (dedup handled in analytics).
+  useEffect(() => {
+    if (sound.kind !== "ready") return;
+    analytics.soulSoundGenerated({
+      archetype: result?.bestMatch.displayName ?? null,
+    });
+  }, [sound.kind, result]);
+
+
   const archetypeId = result?.bestMatch.id ?? null;
   const content = archetypeId ? archetypeContent[archetypeId] : null;
 
