@@ -263,6 +263,7 @@ function FAQ() {
       <div className="mt-16 flex flex-col items-center gap-4 text-center">
         <Link
           to="/quiz"
+          onClick={() => resetQuizProgress()}
           className="btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide"
         >
           Start the Quiz
