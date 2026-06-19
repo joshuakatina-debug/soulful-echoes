@@ -9,12 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as CompleteRouteImport } from './routes/complete'
 import { Route as CalculatingRouteImport } from './routes/calculating'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
@@ -23,6 +30,11 @@ const ResultsRoute = ResultsRouteImport.update({
 const QuizRoute = QuizRouteImport.update({
   id: '/quiz',
   path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompleteRoute = CompleteRouteImport.update({
@@ -45,42 +57,79 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calculating': typeof CalculatingRoute
   '/complete': typeof CompleteRoute
+  '/privacy': typeof PrivacyRoute
   '/quiz': typeof QuizRoute
   '/results': typeof ResultsRoute
+  '/terms': typeof TermsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calculating': typeof CalculatingRoute
   '/complete': typeof CompleteRoute
+  '/privacy': typeof PrivacyRoute
   '/quiz': typeof QuizRoute
   '/results': typeof ResultsRoute
+  '/terms': typeof TermsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/calculating': typeof CalculatingRoute
   '/complete': typeof CompleteRoute
+  '/privacy': typeof PrivacyRoute
   '/quiz': typeof QuizRoute
   '/results': typeof ResultsRoute
+  '/terms': typeof TermsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calculating' | '/complete' | '/quiz' | '/results'
+  fullPaths:
+    | '/'
+    | '/calculating'
+    | '/complete'
+    | '/privacy'
+    | '/quiz'
+    | '/results'
+    | '/terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calculating' | '/complete' | '/quiz' | '/results'
-  id: '__root__' | '/' | '/calculating' | '/complete' | '/quiz' | '/results'
+  to:
+    | '/'
+    | '/calculating'
+    | '/complete'
+    | '/privacy'
+    | '/quiz'
+    | '/results'
+    | '/terms'
+  id:
+    | '__root__'
+    | '/'
+    | '/calculating'
+    | '/complete'
+    | '/privacy'
+    | '/quiz'
+    | '/results'
+    | '/terms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalculatingRoute: typeof CalculatingRoute
   CompleteRoute: typeof CompleteRoute
+  PrivacyRoute: typeof PrivacyRoute
   QuizRoute: typeof QuizRoute
   ResultsRoute: typeof ResultsRoute
+  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/results': {
       id: '/results'
       path: '/results'
@@ -93,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/quiz'
       fullPath: '/quiz'
       preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/complete': {
@@ -123,8 +179,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalculatingRoute: CalculatingRoute,
   CompleteRoute: CompleteRoute,
+  PrivacyRoute: PrivacyRoute,
   QuizRoute: QuizRoute,
   ResultsRoute: ResultsRoute,
+  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

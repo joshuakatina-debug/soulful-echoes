@@ -49,7 +49,6 @@ function Landing() {
         <EmotionalPromise />
         <SamplePreview />
         <FAQ />
-        <Footer />
       </div>
     </main>
   );
@@ -326,13 +325,3 @@ function SectionHeader({
   );
 }
 
-function Footer() {
-  return (
-    <footer className="mx-auto max-w-6xl px-6 pb-12 pt-8 text-center">
-      <div className="hairline mx-auto mb-8 w-24" />
-      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-        Soul Sounds · made to be felt
-      </p>
-    </footer>
-  );
-}
