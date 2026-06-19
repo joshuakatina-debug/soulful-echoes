@@ -216,7 +216,6 @@ export const analytics = {
   },
 
   soulSoundPlayed(opts?: { archetype?: string | null }) {
-    if (!onceSession("soul_sound_played")) return;
     send("soul_sound_played", {
       ...(opts?.archetype ? { archetype: opts.archetype } : {}),
     });
