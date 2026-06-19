@@ -74,44 +74,39 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="mx-auto flex max-w-4xl flex-col items-center px-6 pt-24 pb-28 text-center sm:pt-32">
-      <div className="animate-fade-up mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-muted-foreground backdrop-blur">
-        <span className="h-1.5 w-1.5 rounded-full bg-primary animate-breathe" />
-        A personalized instrumental experience
-      </div>
-
+    <section className="mx-auto flex max-w-4xl flex-col items-center px-6 pt-12 pb-10 text-center sm:pt-16 sm:pb-12">
       <h1
-        className="font-display animate-fade-up text-5xl leading-[1.05] sm:text-6xl md:text-7xl"
+        className="font-display animate-fade-up text-4xl leading-[1.1] sm:text-5xl md:text-6xl"
         style={{ animationDelay: "0.1s" }}
       >
-        Discover the <span className="text-gradient italic">Sound of Your Soul</span>
+        What does your personality sound like?
       </h1>
 
       <p
-        className="animate-fade-up mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
+        className="animate-fade-up mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
         style={{ animationDelay: "0.22s" }}
       >
-        Take a one-minute quiz and receive a personalized instrumental piece
-        inspired by your unique spirit.
+        Answer 12 questions to discover your Soul Archetype and hear a cinematic
+        piece of music inspired by who you are.
       </p>
 
       <div
-        className="animate-fade-up mt-12 flex flex-col items-center gap-5"
+        className="animate-fade-up mt-8 flex flex-col items-center gap-3"
         style={{ animationDelay: "0.36s" }}
       >
         <Link
           to="/quiz"
           onClick={() => resetQuizProgress()}
-          className="btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide"
+          className="btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide sm:px-12 sm:py-5 sm:text-lg"
         >
-          Start the Quiz
+          Start the 1-Minute Quiz
         </Link>
-        <p className="max-w-md text-sm leading-relaxed text-muted-foreground/90">
-          No singing. No lyrics. Just a custom instrumental reflection of you.
+        <p className="text-sm text-muted-foreground/80">
+          Takes about 1 minute.
         </p>
       </div>
 
-      <div className="hairline animate-fade-up mt-24 w-40" style={{ animationDelay: "0.5s" }} />
+      <div className="hairline animate-fade-up mt-12 w-40" style={{ animationDelay: "0.5s" }} />
     </section>
   );
 }
