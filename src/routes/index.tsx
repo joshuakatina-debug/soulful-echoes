@@ -74,7 +74,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="mx-auto flex max-w-4xl flex-col items-center px-6 pt-12 pb-10 text-center sm:pt-16 sm:pb-12">
+    <section className="mx-auto flex max-w-4xl flex-col items-center px-6 pt-8 pb-4 text-center sm:pt-10 sm:pb-6">
       <h1
         className="font-display animate-fade-up text-4xl leading-[1.1] sm:text-5xl md:text-6xl"
         style={{ animationDelay: "0.1s" }}
@@ -83,15 +83,16 @@ function Hero() {
       </h1>
 
       <p
-        className="animate-fade-up mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
+        className="animate-fade-up mt-3 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl"
         style={{ animationDelay: "0.22s" }}
       >
-        Answer 12 questions to discover your Soul Archetype and hear an original
-        piece of music inspired by who you are.
+        You already have a unique emotional fingerprint.
+        We've transformed it into music.
+        Answer 12 simple questions to discover your Soul Archetype and hear an original soundtrack inspired by who you are.
       </p>
 
       <div
-        className="animate-fade-up mt-8 flex flex-col items-center gap-3"
+        className="animate-fade-up mt-6 flex flex-col items-center gap-3"
         style={{ animationDelay: "0.36s" }}
       >
         <Link
@@ -102,11 +103,50 @@ function Hero() {
           Start the 1-Minute Quiz
         </Link>
         <p className="text-sm text-muted-foreground/80">
-          Takes about 1 minute.
+          No account required to begin.
         </p>
       </div>
 
-      <div className="hairline animate-fade-up mt-12 w-40" style={{ animationDelay: "0.5s" }} />
+      {/* Teaser result card — partially obscured to create curiosity */}
+      <div
+        className="animate-fade-up relative mt-8 w-full max-w-xs overflow-hidden rounded-2xl"
+        style={{ animationDelay: "0.5s" }}
+      >
+        <div className="glass-card p-6 text-center opacity-50">
+          <div className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+            Your Soul Archetype
+          </div>
+          <div className="font-display mt-2 text-2xl text-foreground">The Dreamer</div>
+          <div className="mt-3 flex justify-center gap-1">
+            {Array.from({ length: 16 }).map((_, i) => (
+              <span key={i} className="block h-3 w-1.5 rounded-full bg-primary/40" />
+            ))}
+          </div>
+          <div className="mt-3 flex items-center justify-center gap-2 text-sm text-primary">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            <span>Your Soul Sound</span>
+          </div>
+        </div>
+        {/* Gradient fade to make the teaser feel intentionally incomplete */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent" />
+      </div>
+
+      <div className="hairline animate-fade-up mt-8 w-40" style={{ animationDelay: "0.6s" }} />
+
+      {/* Scroll indicator */}
+      <div className="animate-fade-up mt-6" style={{ animationDelay: "0.7s" }}>
+        <svg
+          className="h-5 w-5 animate-bounce text-muted-foreground/50"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
     </section>
   );
 }
