@@ -902,7 +902,7 @@ function Results() {
                       controls
                       onEnded={handleEnded}
                       onPlay={() => {
-                        analytics.soulSoundPlayed();
+                        analytics.soulSoundPlayed({ archetype: archetypeName });
                         setIsPlaying(true);
                       }}
                       onPause={() => setIsPlaying(false)}
