@@ -171,7 +171,7 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-24">
+    <section className="mx-auto max-w-6xl px-6 pt-10 pb-24">
       <SectionHeader eyebrow="How it works" title="A short, gentle journey." />
       <div className="mt-14 grid gap-5 sm:grid-cols-3">
         {steps.map((s, i) => (
