@@ -2,6 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { meta } from "@/lib/meta";
 import { resetQuizProgress } from "@/lib/quiz-reset";
+import { analytics } from "@/lib/analytics";
+
+function handleBeginDiscoveryClick(buttonText: string) {
+  resetQuizProgress();
+  analytics.beginDiscovery({ buttonText });
+}
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -195,7 +202,7 @@ function GlowButton({ size = "lg" }: { size?: "lg" | "md" }) {
   return (
     <Link
       to="/quiz"
-      onClick={() => resetQuizProgress()}
+      onClick={() => handleBeginDiscoveryClick("Begin Your Discovery")}
       className={`group relative inline-flex items-center justify-center overflow-hidden rounded-full font-medium tracking-wide ${pad}`}
     >
       {/* Glow halo */}
@@ -208,6 +215,7 @@ function GlowButton({ size = "lg" }: { size?: "lg" | "md" }) {
         Begin Your Discovery
       </span>
     </Link>
+
   );
 }
 
@@ -431,7 +439,7 @@ function FloatingCTA() {
       <div className="pointer-events-auto">
         <Link
           to="/quiz"
-          onClick={() => resetQuizProgress()}
+          onClick={() => handleBeginDiscoveryClick("Begin Your Discovery (floating)")}
           className="btn-primary inline-flex items-center justify-center rounded-full px-7 py-3 text-sm font-medium tracking-wide shadow-lg sm:text-base"
         >
           Begin Your Discovery
