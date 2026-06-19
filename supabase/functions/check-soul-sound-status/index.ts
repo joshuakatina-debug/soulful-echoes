@@ -70,10 +70,11 @@ Deno.serve(async (req: Request) => {
             }).catch((e) => console.error("[status] email retry failed", e));
           } catch (_) { /* ignore */ }
         }
+        const playable = await resolveAudioUrl(db, row.audio_url);
         return new Response(
           JSON.stringify({
             status: "succeeded",
-            audioUrl: row.audio_url,
+            audioUrl: playable,
             imageUrl: row.image_url,
             duration: row.duration,
             title: row.title,
