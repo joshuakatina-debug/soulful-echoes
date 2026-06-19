@@ -102,6 +102,7 @@ function Hero() {
       >
         <Link
           to="/quiz"
+          onClick={() => resetQuizProgress()}
           className="btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide"
         >
           Start the Quiz
