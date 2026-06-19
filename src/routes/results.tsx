@@ -517,6 +517,18 @@ function Results() {
             setRecordExists(true);
             setSound({ kind: "loading" });
             startPolling(data.taskId, sessionId);
+          } else if (data.status === "expired") {
+            // Legacy paid session whose upstream audio is gone. Drop any
+            // stale local cache and let the auto-generate effect below
+            // kick off a fresh one-shot regeneration.
+            try {
+              localStorage.removeItem(`soulSound:${sessionId}`);
+            } catch {
+              // ignore
+            }
+            setRecordExists(false);
+            setSound({ kind: "idle" });
+            setAutoGenerate(true);
           }
           // If status === "failed", leave recordExists=false so the user can
           // retry exactly once via the Try Again button.
