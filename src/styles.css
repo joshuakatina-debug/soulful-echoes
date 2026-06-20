@@ -34,6 +34,8 @@
   --color-clay: var(--clay);
   --color-olive: var(--olive);
   --color-charcoal: var(--charcoal);
+  --color-warm-gray: var(--warm-gray);
+  --color-soft-black: var(--soft-black);
   --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
