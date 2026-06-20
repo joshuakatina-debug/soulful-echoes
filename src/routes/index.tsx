@@ -350,12 +350,13 @@ function PhotoSlot({
   objectPosition?: string;
   children?: ReactNode;
 }) {
+  const isAbsolute = className.includes("absolute");
   if (children) {
-    return <div className={`relative overflow-hidden bg-sand ${className}`}>{children}</div>;
+    return <div className={`overflow-hidden bg-sand ${isAbsolute ? "" : "relative"} ${className}`}>{children}</div>;
   }
   if (src) {
     return (
-      <div className={`relative overflow-hidden bg-sand ${className}`}>
+      <div className={`overflow-hidden bg-sand ${isAbsolute ? "" : "relative"} ${className}`}>
         <img
           src={src}
           alt={label}
@@ -368,7 +369,7 @@ function PhotoSlot({
   }
   return (
     <div
-      className={`relative overflow-hidden bg-sand ${className}`}
+      className={`overflow-hidden bg-sand ${isAbsolute ? "" : "relative"} ${className}`}
       role="img"
       aria-label={label}
     >
