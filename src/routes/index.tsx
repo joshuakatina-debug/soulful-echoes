@@ -3,6 +3,12 @@ import { useEffect, useState, ReactNode } from "react";
 import { meta } from "@/lib/meta";
 import { resetQuizProgress } from "@/lib/quiz-reset";
 import { analytics } from "@/lib/analytics";
+import closeup from "@/assets/photos/closeup.jpg.asset.json";
+import subway from "@/assets/photos/subway.jpg.asset.json";
+import listening from "@/assets/photos/listening.jpg.asset.json";
+import rooftop from "@/assets/photos/rooftop.jpg.asset.json";
+import records from "@/assets/photos/records.jpg.asset.json";
+import cassette from "@/assets/photos/cassette.jpg.asset.json";
 
 function handleBeginDiscoveryClick(buttonText: string) {
   resetQuizProgress();
@@ -65,20 +71,19 @@ function Nav() {
 function Hero() {
   return (
     <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden">
-      {/* Photo slot — replace src with your upload */}
       <PhotoSlot
-        label="Hero portrait — close-up, soft eye contact, headphones"
+        label="Close-up portrait — sunlit eyes through fabric"
+        src={closeup.url}
+        objectPosition="50% 40%"
         className="absolute inset-0 animate-slow-zoom"
       />
 
-      {/* Cinematic gradient for legibility */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/70"
+        className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/75"
       />
       <div aria-hidden className="film-grain absolute inset-0" />
 
-      {/* Title block — bottom-anchored, editorial */}
       <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-end px-6 pb-14 sm:px-10 sm:pb-20">
         <p
           className="animate-fade-up text-[11px] uppercase tracking-[0.4em] text-ivory/80"
@@ -113,7 +118,7 @@ function Hero() {
   );
 }
 
-/* ---------- Primary CTA — quiet, premium ---------- */
+/* ---------- Primary CTA ---------- */
 
 function PrimaryCTA({ label, source }: { label: string; source: string }) {
   return (
@@ -136,13 +141,28 @@ function PrimaryCTA({ label, source }: { label: string; source: string }) {
   );
 }
 
-/* ---------- Reactions — editorial pull-quotes over photos ---------- */
+/* ---------- Reactions ---------- */
 
 function Reactions() {
   const items = [
-    { quote: "I wasn't expecting to cry.", caption: "Mira, 28" },
-    { quote: "It felt incredibly personal.", caption: "Theo, 34" },
-    { quote: "I listened three times.", caption: "Ana, 41" },
+    {
+      src: subway.url,
+      pos: "60% 40%",
+      quote: "It found me on the train home.",
+      caption: "Mira, 28",
+    },
+    {
+      src: listening.url,
+      pos: "55% 40%",
+      quote: "I closed my eyes and just listened.",
+      caption: "Ana, 31",
+    },
+    {
+      src: rooftop.url,
+      pos: "55% 35%",
+      quote: "I sat with it until the sun went down.",
+      caption: "Theo, 24",
+    },
   ];
   return (
     <section className="mx-auto max-w-7xl px-6 py-24 sm:px-10 sm:py-36">
@@ -153,12 +173,14 @@ function Reactions() {
       <div className="grid gap-12 sm:grid-cols-3 sm:gap-8">
         {items.map((it, i) => (
           <figure
-            key={it.quote}
+            key={it.caption}
             className="animate-fade-up flex flex-col gap-5"
             style={{ animationDelay: `${0.05 + i * 0.1}s` }}
           >
             <PhotoSlot
-              label={`Portrait ${i + 1} — candid, soft light`}
+              label={`Portrait — ${it.caption}`}
+              src={it.src}
+              objectPosition={it.pos}
               className="aspect-[4/5] w-full"
             />
             <blockquote className="font-display text-2xl leading-snug text-charcoal sm:text-3xl">
@@ -191,7 +213,7 @@ function Tease() {
   );
 }
 
-/* ---------- Journey — three editorial frames ---------- */
+/* ---------- Journey ---------- */
 
 function Journey() {
   const steps = [
@@ -199,16 +221,22 @@ function Journey() {
       n: "01",
       title: "Answer a few quiet questions",
       body: "Nothing intrusive. Nothing clever. Just you.",
+      src: cassette.url,
+      pos: "50% 50%",
     },
     {
       n: "02",
       title: "Discover your Soul Archetype",
       body: "A portrait of who you are when no one's watching.",
+      src: records.url,
+      pos: "50% 35%",
     },
     {
       n: "03",
       title: "Hear what you sound like",
       body: "An original piece, composed for you.",
+      src: rooftop.url,
+      pos: "55% 35%",
     },
   ];
   return (
@@ -228,6 +256,8 @@ function Journey() {
           >
             <PhotoSlot
               label={`Step ${s.n} — ${s.title}`}
+              src={s.src}
+              objectPosition={s.pos}
               className="aspect-[4/5] w-full"
             />
             <div>
@@ -244,16 +274,18 @@ function Journey() {
   );
 }
 
-/* ---------- Final CTA — full-bleed close ---------- */
+/* ---------- Final CTA ---------- */
 
 function FinalCTA() {
   return (
     <section className="relative h-[90svh] min-h-[560px] w-full overflow-hidden">
       <PhotoSlot
-        label="Final — quiet portrait, eyes closed, listening"
+        label="Final — eyes closed, headphones, listening"
+        src={listening.url}
+        objectPosition="55% 35%"
         className="absolute inset-0"
       />
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-black/40" />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/50" />
       <div aria-hidden className="film-grain absolute inset-0" />
       <div className="relative z-10 mx-auto flex h-full max-w-3xl flex-col items-center justify-end px-6 pb-16 text-center sm:pb-24">
         <h2 className="font-display text-4xl leading-[1.05] text-ivory sm:text-6xl">
@@ -303,22 +335,36 @@ function FloatingCTA() {
   );
 }
 
-/* ---------- Photo slot ----------
-   Placeholder until photography is uploaded.
-   Replace `children` with: <img src="..." alt="..." className="h-full w-full object-cover" />
-*/
+/* ---------- Photo slot ---------- */
 
 function PhotoSlot({
   className = "",
   label,
+  src,
+  objectPosition = "50% 50%",
   children,
 }: {
   className?: string;
   label: string;
+  src?: string;
+  objectPosition?: string;
   children?: ReactNode;
 }) {
   if (children) {
     return <div className={`relative overflow-hidden bg-sand ${className}`}>{children}</div>;
+  }
+  if (src) {
+    return (
+      <div className={`relative overflow-hidden bg-sand ${className}`}>
+        <img
+          src={src}
+          alt={label}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition }}
+        />
+      </div>
+    );
   }
   return (
     <div
