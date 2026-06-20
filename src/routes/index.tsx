@@ -193,9 +193,9 @@ function BigCTA({
     <Link
       to="/quiz"
       onClick={() => handleBeginDiscoveryClick(`${label} (${source})`)}
-      className={`group relative inline-flex items-center justify-center overflow-hidden rounded-full font-semibold tracking-wide ${pad}`}
+      className="group relative inline-flex items-center justify-center overflow-hidden rounded-full font-semibold tracking-wide whitespace-nowrap"
     >
-      {/* ambient glow layers */}
+      {/* ambient glow layers (behind the button) */}
       <span
         aria-hidden
         className="absolute inset-0 rounded-full bg-primary/50 blur-2xl opacity-70 transition-opacity duration-500 group-hover:opacity-100 animate-breathe"
@@ -205,7 +205,9 @@ function BigCTA({
         className="absolute inset-[-25%] rounded-full bg-primary/20 blur-3xl opacity-60 animate-breathe"
         style={{ animationDelay: "-3s" }}
       />
-      <span className="btn-primary relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full whitespace-nowrap px-[inherit] py-[inherit] transition-transform duration-500 group-hover:scale-[1.03]">
+      <span
+        className={`btn-primary relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full transition-transform duration-500 group-hover:scale-[1.03] ${pad}`}
+      >
         {label}
         <svg
           className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
