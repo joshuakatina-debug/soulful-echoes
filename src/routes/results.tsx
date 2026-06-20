@@ -762,7 +762,13 @@ function Results() {
                 <h2 className="font-display mt-4 text-4xl leading-[1.05] text-foreground sm:mt-6 sm:text-5xl md:text-6xl">
                   Now hear it in sound.
                 </h2>
-                <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-foreground/70 sm:mt-6 sm:text-lg">
+                <div className="mt-6 flex justify-center sm:mt-8">
+                  <ContinueDiscoveringButton
+                    variant="primary"
+                    className="font-bold"
+                  />
+                </div>
+                <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-foreground/70 sm:mt-8 sm:text-lg">
                   An original instrumental reflection shaped by the rhythm, feeling, and movement of your archetype.
                 </p>
               </div>
