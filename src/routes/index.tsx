@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import { meta } from "@/lib/meta";
 import { resetQuizProgress } from "@/lib/quiz-reset";
 import { analytics } from "@/lib/analytics";
@@ -12,19 +12,19 @@ function handleBeginDiscoveryClick(buttonText: string) {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "What does your personality sound like?" },
+      { title: "Your personality already has a sound." },
       {
         name: "description",
         content:
-          "A 3-minute experience that turns who you are into sound. Find out what your personality sounds like.",
+          "Answer 12 simple questions to discover the music that sounds most like you.",
       },
       {
         property: "og:title",
-        content: "What does your personality sound like?",
+        content: "Your personality already has a sound.",
       },
       {
         property: "og:description",
-        content: "Find out in 3 minutes. It's already within you.",
+        content: "Answer 12 simple questions to discover the music that sounds most like you.",
       },
     ],
   }),
@@ -119,46 +119,49 @@ function Nav() {
   );
 }
 
-/* ---------- Hero (compressed, fold-friendly) ---------- */
+/* ---------- Hero (compressed, reward-focused) ---------- */
 
 function Hero() {
   return (
-    <section className="relative mx-auto flex min-h-[calc(100svh-3rem)] max-w-2xl flex-col items-center justify-center px-6 pb-10 pt-2 text-center">
+    <section className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-2xl flex-col items-center justify-center px-6 pb-6 pt-2 text-center">
       <h1
-        className="font-display animate-fade-up text-[2.5rem] leading-[1.05] sm:text-6xl md:text-7xl"
+        className="font-display animate-fade-up text-[2.25rem] leading-[1.05] sm:text-5xl md:text-6xl"
         style={{ animationDelay: "0.1s" }}
       >
-        What does your <span className="text-gradient italic">personality</span> sound like?
+        Your personality already has a{" "}
+        <span className="text-gradient italic">sound</span>.
       </h1>
 
       <p
-        className="animate-fade-up mt-5 max-w-md text-base text-muted-foreground sm:mt-6 sm:text-lg"
+        className="animate-fade-up mt-3 max-w-md text-base text-muted-foreground sm:text-lg"
         style={{ animationDelay: "0.3s" }}
       >
-        Most people will never find out.
-        <br className="hidden sm:block" /> You're about to.
+        Answer 12 simple questions to discover the music that sounds most like you.
       </p>
 
       <div
-        className="animate-fade-up mt-8 flex flex-col items-center gap-3 sm:mt-10"
+        className="animate-fade-up mt-5 flex w-full max-w-sm flex-col items-center gap-3 sm:mt-6"
         style={{ animationDelay: "0.5s" }}
       >
-        <BigCTA label="Start the Quiz" source="hero" />
-        <p className="text-xs text-muted-foreground/80 sm:text-sm">
-          3 minutes · Free · No sign-up
-        </p>
+        <Payoff />
+        <BigCTA label="Discover My Soul Sound" source="hero" />
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <ReassuranceChip>Free</ReassuranceChip>
+          <ReassuranceChip>3 Minutes</ReassuranceChip>
+          <ReassuranceChip>Instant Results</ReassuranceChip>
+        </div>
       </div>
 
-      {/* Peek of next section (encourages scroll without empty space) */}
+      {/* Minimal scroll cue */}
       <div
-        className="animate-fade-up pointer-events-none absolute inset-x-0 bottom-2 flex flex-col items-center gap-2"
+        className="animate-fade-up pointer-events-none absolute inset-x-0 bottom-2 flex flex-col items-center gap-1"
         style={{ animationDelay: "1s" }}
       >
-        <span className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground/60">
+        <span className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground/50">
           What others felt
         </span>
         <svg
-          className="h-4 w-4 animate-bounce text-muted-foreground/60"
+          className="h-4 w-4 animate-bounce text-muted-foreground/50"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"
@@ -171,7 +174,7 @@ function Hero() {
   );
 }
 
-/* ---------- Big primary CTA ---------- */
+/* ---------- Big primary CTA (alive, premium) ---------- */
 
 function BigCTA({
   label,
@@ -192,11 +195,17 @@ function BigCTA({
       onClick={() => handleBeginDiscoveryClick(`${label} (${source})`)}
       className={`group relative inline-flex items-center justify-center overflow-hidden rounded-full font-semibold tracking-wide ${pad}`}
     >
+      {/* ambient glow layers */}
       <span
         aria-hidden
         className="absolute inset-0 rounded-full bg-primary/50 blur-2xl opacity-70 transition-opacity duration-500 group-hover:opacity-100 animate-breathe"
       />
-      <span className="btn-primary relative inline-flex items-center justify-center gap-2 rounded-full px-[inherit] py-[inherit] transition-transform duration-500 group-hover:scale-[1.03]">
+      <span
+        aria-hidden
+        className="absolute inset-[-25%] rounded-full bg-primary/20 blur-3xl opacity-60 animate-breathe"
+        style={{ animationDelay: "-3s" }}
+      />
+      <span className="btn-primary relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-[inherit] py-[inherit] transition-transform duration-500 group-hover:scale-[1.03]">
         {label}
         <svg
           className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
@@ -207,6 +216,11 @@ function BigCTA({
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
         </svg>
+        {/* gentle shimmer */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/25 to-transparent bg-[length:200%_100%] opacity-60 animate-[shimmer_4s_ease-in-out_infinite]"
+        />
       </span>
     </Link>
   );
@@ -242,7 +256,7 @@ function ReactionsStrip() {
 
 /* ---------- Tease line (small, not a big pause) ---------- */
 
-function Tease({ text }: { text: React.ReactNode }) {
+function Tease({ text }: { text: ReactNode }) {
   return (
     <section className="mx-auto max-w-2xl px-6 py-10 text-center sm:py-14">
       <p className="font-display animate-fade-up text-2xl leading-snug text-foreground sm:text-3xl md:text-4xl">
@@ -282,7 +296,7 @@ function Journey() {
   );
 }
 
-/* ---------- Final CTA (close the loop, no FAQ noise) ---------- */
+/* ---------- Final CTA (close the loop) ---------- */
 
 function FinalCTA() {
   return (
@@ -293,11 +307,13 @@ function FinalCTA() {
       <p className="mt-3 text-sm text-muted-foreground sm:text-base">
         It only takes three minutes to hear it.
       </p>
-      <div className="mt-8 flex flex-col items-center gap-3">
-        <BigCTA label="Start the Quiz" source="footer" />
-        <p className="text-xs text-muted-foreground/80 sm:text-sm">
-          Free · No sign-up required
-        </p>
+      <div className="mt-6 flex flex-col items-center gap-3">
+        <BigCTA label="Discover My Soul Sound" source="footer" />
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <ReassuranceChip>Free</ReassuranceChip>
+          <ReassuranceChip>3 Minutes</ReassuranceChip>
+          <ReassuranceChip>Instant Results</ReassuranceChip>
+        </div>
       </div>
     </section>
   );
@@ -323,15 +339,60 @@ function FloatingCTA() {
       <div className="pointer-events-auto">
         <Link
           to="/quiz"
-          onClick={() => handleBeginDiscoveryClick("Start the Quiz (floating)")}
+          onClick={() => handleBeginDiscoveryClick("Discover My Soul Sound (floating)")}
           className="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-base font-semibold tracking-wide shadow-2xl sm:text-lg"
         >
-          Start the Quiz
+          Discover My Soul Sound
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
           </svg>
         </Link>
       </div>
     </div>
+  );
+}
+
+/* ---------- Payoff preview (above CTA) ---------- */
+
+function Payoff() {
+  return (
+    <div className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center backdrop-blur-sm">
+      <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-muted-foreground/80">
+        In the next 3 minutes you’ll discover:
+      </p>
+      <ul className="flex flex-col items-center gap-0.5 text-sm text-foreground/90 sm:flex-row sm:justify-center sm:gap-4">
+        <li className="flex items-center gap-1.5">
+          <span aria-hidden>✨</span>
+          Your Soul Archetype
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span aria-hidden>🧠</span>
+          Your Core Identity
+        </li>
+        <li className="flex items-center gap-1.5">
+          <span aria-hidden>🎼</span>
+          Your unique Soul Sound
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+/* ---------- Premium reassurance chips ---------- */
+
+function ReassuranceChip({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-medium tracking-wide text-foreground/80">
+      <svg
+        className="h-3 w-3 text-primary"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12l5 5L20 7" />
+      </svg>
+      {children}
+    </span>
   );
 }
