@@ -746,12 +746,12 @@ function Results() {
 
         {/* === SOUL SOUND (editorial centerpiece) === */}
         <div
-          className={`order-2 mt-6 transition-all duration-1000 ease-out sm:mt-8 ${
+          className={`order-2 mt-4 transition-all duration-1000 ease-out sm:mt-6 ${
             phase >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
           <section id="soul-sound-section" ref={soundSectionRef} className="mt-0">
-            <article className="relative overflow-hidden rounded-[2rem] border border-foreground/[0.10] bg-foreground/[0.03] px-6 py-14 backdrop-blur-sm sm:px-14 sm:py-20">
+            <article className="relative overflow-hidden rounded-[2rem] border border-foreground/[0.10] bg-foreground/[0.03] px-6 py-10 backdrop-blur-sm sm:px-14 sm:py-20">
               <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.10] blur-3xl" />
               <div className="pointer-events-none absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.10] blur-3xl" />
 
@@ -759,15 +759,15 @@ function Results() {
                 <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
                   Your Soul Sound
                 </p>
-                <h2 className="font-display mt-6 text-4xl leading-[1.05] text-foreground sm:text-5xl md:text-6xl">
+                <h2 className="font-display mt-4 text-4xl leading-[1.05] text-foreground sm:mt-6 sm:text-5xl md:text-6xl">
                   Now hear it in sound.
                 </h2>
-                <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+                <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-foreground/70 sm:mt-6 sm:text-lg">
                   An original instrumental reflection shaped by the rhythm, feeling, and movement of your archetype.
                 </p>
               </div>
 
-              <div className="relative mt-12">
+              <div className="relative mt-8 sm:mt-12">
                 {sound.kind === "idle" && (
                   <div className="text-center">
                     {isPaid ? (
@@ -797,7 +797,7 @@ function Results() {
                         </p>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center gap-4">
+                      <div className="flex flex-col items-center gap-3">
                         <p className="mx-auto max-w-md text-sm italic text-foreground/60">
                           Your Soul Sound is ready to be composed when you continue.
                         </p>
