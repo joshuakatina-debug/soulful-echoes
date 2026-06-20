@@ -168,7 +168,7 @@ function BigCTA({
 }) {
   const pad =
     size === "lg"
-      ? "px-8 py-5 text-base sm:px-14 sm:py-5 sm:text-lg"
+      ? "px-8 py-5 text-lg sm:px-14 sm:py-5 sm:text-xl"
       : "px-8 py-3.5 text-sm sm:text-base";
   return (
     <Link
