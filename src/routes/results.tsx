@@ -1115,8 +1115,8 @@ function ContinueDiscoveringButton({
 
   const baseClass =
     variant === "primary"
-      ? "btn-primary inline-flex items-center justify-center rounded-full px-8 py-3 text-sm font-medium tracking-wide transition disabled:opacity-60 disabled:cursor-not-allowed"
-      : "rounded-full border border-foreground/20 bg-foreground/[0.04] px-8 py-3 text-sm font-medium text-foreground transition hover:border-foreground/40 hover:bg-foreground/[0.08] disabled:cursor-wait disabled:opacity-60";
+      ? "btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide transition disabled:opacity-60 disabled:cursor-not-allowed"
+      : "rounded-full border border-gold/50 bg-gold/[0.15] px-10 py-4 text-base font-medium text-gold shadow-[0_0_24px_-8px_var(--gold)] transition hover:border-gold/70 hover:bg-gold/[0.25] hover:shadow-[0_0_32px_-4px_var(--gold)] disabled:cursor-wait disabled:opacity-60";
 
   return (
     <div className="flex flex-col items-center gap-3">
