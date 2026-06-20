@@ -718,7 +718,7 @@ function Results() {
 
           {/* Core Identity summary */}
           <div
-            className={`mt-6 transition-all duration-700 ease-out sm:mt-8 ${
+            className={`mt-4 transition-all duration-700 ease-out sm:mt-6 ${
               phase >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
             }`}
           >
