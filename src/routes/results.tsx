@@ -714,11 +714,19 @@ function Results() {
             <p className="font-display mt-3 text-lg italic text-foreground/50 sm:text-xl">
               {content.subtitle}
             </p>
+            <div className="mt-4">
+              <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
+                Your Soul Sound
+              </p>
+              <p className="font-display mt-1 text-base italic text-foreground/70">
+                Now hear it in sound.
+              </p>
+            </div>
           </div>
 
           {/* Primary CTA */}
           <div
-            className={`mt-6 transition-all duration-700 ease-out ${
+            className={`mt-5 transition-all duration-700 ease-out ${
               phase >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
             }`}
           >
