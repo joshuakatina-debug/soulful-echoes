@@ -1126,7 +1126,6 @@ function ContinueDiscoveringButton({
     }
   }
 
-  const isPreparing = isPaid && sound?.kind !== "ready";
   const label =
     isPaid && sound?.kind === "ready" ? "Hear Your Soul Sound" : "Continue Discovering";
 
