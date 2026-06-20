@@ -125,6 +125,16 @@ function capitalize(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
+function firstSentence(text: string) {
+  const match = text.match(/^[^.!?]+[.!?]+/);
+  return match ? match[0].trim() : text;
+}
+
+function getCoreIdentitySummary(text: string) {
+  const sentence = firstSentence(text);
+  return sentence.length < text.length ? `${sentence}...` : sentence;
+}
+
 function Results() {
   const [result, setResult] = useState<StoredSoulResult | null>(null);
   const [flavorAnswers, setFlavorAnswers] = useState<FlavorAnswers>({});
@@ -233,16 +243,16 @@ function Results() {
   }, [result, flavorAnswers]);
 
 
-  // Reveal sequence
+  // Reveal sequence: faster momentum so the CTA appears quickly.
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase(1), 100),
-      setTimeout(() => setPhase(2), 800),
-      setTimeout(() => setPhase(3), 1400),
-      setTimeout(() => setPhase(4), 2400),
-      setTimeout(() => setPhase(5), 3200),
-      setTimeout(() => setPhase(6), 4000),
-      setTimeout(() => setPhase(7), 5200),
+      setTimeout(() => setPhase(1), 50),
+      setTimeout(() => setPhase(2), 500),
+      setTimeout(() => setPhase(3), 900),
+      setTimeout(() => setPhase(4), 1400),
+      setTimeout(() => setPhase(5), 1900),
+      setTimeout(() => setPhase(6), 2600),
+      setTimeout(() => setPhase(7), 3200),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -651,10 +661,10 @@ function Results() {
         }`}
       />
 
-      <div className="relative z-10 mx-auto max-w-3xl px-6 py-16 sm:py-24">
+      <div className="relative z-10 mx-auto max-w-3xl px-6 pt-8 pb-12 sm:py-24">
         {/* Nav */}
         <nav
-          className={`mb-24 flex items-center justify-between transition-all duration-700 ease-out sm:mb-32 ${
+          className={`mb-8 flex items-center justify-between transition-all duration-700 ease-out sm:mb-12 ${
             phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-3"
           }`}
         >
@@ -667,79 +677,87 @@ function Results() {
         </nav>
 
         {/* === STAGE 2: THE ARCHETYPE REVEAL === */}
-
-        {/* Heading: Your Soul Archetype */}
-        <div
-          className={`pt-8 text-center transition-all duration-700 ease-out ${
-            phase >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
-          <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
-            Your Soul Archetype
-          </p>
-        </div>
-
-        {/* Hero: Archetype Name */}
-        <div
-          className={`mt-6 text-center transition-all duration-1000 ease-out ${
-            phase >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <h1 className="font-display text-6xl leading-[0.95] text-foreground sm:text-7xl md:text-8xl lg:text-9xl">
-            {archetypeName}
-          </h1>
-          <p className="font-display mt-5 text-xl italic text-foreground/50 sm:text-2xl">
-            {content.subtitle}
-          </p>
-        </div>
-
-        {/* Core Emotion */}
-        <div
-          className={`mt-28 text-center transition-all duration-700 ease-out sm:mt-36 ${
-            phase >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
-          <p className="mb-8 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Core Emotion
-          </p>
-          <p className="font-display text-4xl text-foreground sm:text-5xl md:text-6xl">
-            {content.coreEmotion}
-          </p>
-        </div>
-
-        {/* Soul Keywords */}
-        <div
-          className={`mt-28 transition-all duration-700 ease-out sm:mt-36 ${
-            phase >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
-          <p className="mb-8 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Your Soul Keywords
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {content.soulKeywords.slice(0, 5).map((k) => (
-              <span
-                key={k}
-                className="rounded-full border border-foreground/10 bg-foreground/[0.03] px-5 py-2 text-sm text-foreground/80 backdrop-blur-sm"
-              >
-                {capitalize(k)}
-              </span>
-            ))}
+        <section className="flex flex-col items-center text-center">
+          {/* Celebration */}
+          <div
+            className={`transition-all duration-700 ease-out ${
+              phase >= 1 ? "opacity-100 scale-100" : "opacity-0 scale-75"
+            }`}
+          >
+            <div className="relative flex h-12 w-12 items-center justify-center rounded-full border border-gold/20 bg-gold/10 text-gold animate-breathe">
+              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2l2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5z" />
+              </svg>
+            </div>
           </div>
-        </div>
 
-        {/* Core Identity */}
+          {/* Label */}
+          <div
+            className={`mt-4 transition-all duration-700 ease-out ${
+              phase >= 2 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
+            <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
+              You are...
+            </p>
+          </div>
+
+          {/* Hero: Archetype Name */}
+          <div
+            className={`mt-3 transition-all duration-1000 ease-out ${
+              phase >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <h1 className="font-display text-5xl leading-[0.95] text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
+              {archetypeName}
+            </h1>
+            <p className="font-display mt-3 text-lg italic text-foreground/50 sm:text-xl">
+              {content.subtitle}
+            </p>
+          </div>
+
+          {/* Primary CTA */}
+          <div
+            className={`mt-6 transition-all duration-700 ease-out ${
+              phase >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+            }`}
+          >
+            <ContinueDiscoveringButton
+              isPaid={isPaid}
+              sound={sound}
+              soundSectionRef={soundSectionRef}
+              onPlay={togglePlay}
+              variant="primary"
+              className="px-10 py-4 text-base sm:px-12 sm:py-5 sm:text-lg"
+            />
+          </div>
+
+          {/* Core Identity summary */}
+          <div
+            className={`mt-6 transition-all duration-700 ease-out sm:mt-8 ${
+              phase >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+            }`}
+          >
+            <p className="font-display mx-auto max-w-xl text-center text-base leading-relaxed text-foreground/80 sm:text-lg">
+              {getCoreIdentitySummary(content.soulIdentity)}
+            </p>
+          </div>
+        </section>
+
+        {/* Full Core Identity — supporting content */}
         <div
-          className={`mt-28 transition-all duration-700 ease-out sm:mt-36 ${
-            phase >= 6 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          className={`mt-12 transition-all duration-1000 ease-out sm:mt-16 ${
+            phase >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <p className="mb-8 text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Core Identity
-          </p>
-          <p className="font-display mx-auto max-w-2xl text-center text-2xl leading-relaxed text-foreground/90 sm:text-3xl">
-            {content.soulIdentity}
-          </p>
+          <section className="text-center">
+            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+              Core Identity
+            </p>
+            <p className="font-display mx-auto max-w-2xl text-center text-xl leading-relaxed text-foreground/90 sm:text-2xl">
+              {content.soulIdentity}
+            </p>
+          </section>
         </div>
 
         {/* === SOUL SOUND (editorial centerpiece) === */}
@@ -951,13 +969,13 @@ function Results() {
                 <article className="group relative overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.02] p-6 backdrop-blur-sm sm:p-8">
                   <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.05] blur-2xl" />
                   <h3 className="font-display relative text-xl text-foreground/90 sm:text-2xl">
-                    Emotional Blueprint
+                    Core Emotion
                   </h3>
                   <p className="font-display relative mt-3 text-lg text-foreground/80">
                     {content.coreEmotion}
                   </p>
                   <p className="relative mt-3 text-sm leading-relaxed text-foreground/70">
-                    {content.soulIdentity}
+                    The emotional signature of your archetype.
                   </p>
                 </article>
 
@@ -1051,9 +1069,6 @@ function Results() {
                   </article>
                 </div>
 
-                <div className="mt-12 text-center">
-                  <ContinueDiscoveringButton />
-                </div>
               </>
             )}
           </section>
@@ -1064,23 +1079,42 @@ function Results() {
   );
 }
 
-function ContinueDiscoveringButton() {
+function ContinueDiscoveringButton({
+  isPaid,
+  sound,
+  soundSectionRef,
+  onPlay,
+  variant = "secondary",
+  className = "",
+}: {
+  isPaid?: boolean;
+  sound?: SoundStatus;
+  soundSectionRef?: React.RefObject<HTMLElement | null>;
+  onPlay?: () => void;
+  variant?: "primary" | "secondary";
+  className?: string;
+}) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleClick() {
+    if (isPaid) {
+      soundSectionRef?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (sound?.kind === "ready" && onPlay) {
+        setTimeout(() => onPlay(), 400);
+      }
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabase.functions.invoke(
-        "create-checkout-session",
-        {
-          body: {
-            origin: window.location.origin,
-            cancel_path: "/results",
-          },
+      const { data, error } = await supabase.functions.invoke("create-checkout-session", {
+        body: {
+          origin: window.location.origin,
+          cancel_path: "/results",
         },
-      );
+      });
       if (error) throw new Error(error.message);
       if (!data?.url) throw new Error("No checkout URL returned.");
       analytics.checkoutStarted();
@@ -1092,19 +1126,26 @@ function ContinueDiscoveringButton() {
     }
   }
 
+  const isPreparing = isPaid && sound?.kind !== "ready";
+  const label =
+    isPaid && sound?.kind === "ready" ? "Hear Your Soul Sound" : "Continue Discovering";
+
+  const baseClass =
+    variant === "primary"
+      ? "btn-primary inline-flex items-center justify-center rounded-full px-8 py-3 text-sm font-medium tracking-wide transition disabled:opacity-60 disabled:cursor-not-allowed"
+      : "rounded-full border border-foreground/20 bg-foreground/[0.04] px-8 py-3 text-sm font-medium text-foreground transition hover:border-foreground/40 hover:bg-foreground/[0.08] disabled:cursor-wait disabled:opacity-60";
+
   return (
     <div className="flex flex-col items-center gap-3">
       <button
         type="button"
         onClick={handleClick}
-        disabled={loading}
-        className="rounded-full border border-foreground/20 bg-foreground/[0.04] px-8 py-3 text-sm font-medium text-foreground transition hover:border-foreground/40 hover:bg-foreground/[0.08] disabled:cursor-wait disabled:opacity-60"
+        disabled={loading || isPreparing}
+        className={`${baseClass} ${className}`.trim()}
       >
-        {loading ? "Opening checkout…" : "Continue Discovering"}
+        {loading ? "Opening checkout…" : label}
       </button>
-      {error && (
-        <p className="text-xs text-foreground/60">{error}</p>
-      )}
+      {error && <p className="text-xs text-foreground/60">{error}</p>}
     </div>
   );
 }
