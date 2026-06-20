@@ -1140,7 +1140,7 @@ function ContinueDiscoveringButton({
       <button
         type="button"
         onClick={handleClick}
-        disabled={loading || isPreparing}
+        disabled={loading}
         className={`${baseClass} ${className}`.trim()}
       >
         {loading ? "Opening checkout…" : label}
