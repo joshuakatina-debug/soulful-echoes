@@ -757,7 +757,7 @@ function Results() {
 
               <div className="relative text-center">
                 <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
-                  Your Soul Sound
+                  {"\n"}
                 </p>
                 <h2 className="font-display mt-4 text-4xl leading-[1.05] text-foreground sm:mt-6 sm:text-5xl md:text-6xl">
                   Now hear it in sound.
