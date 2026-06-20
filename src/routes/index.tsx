@@ -187,7 +187,7 @@ function BigCTA({
 }) {
   const pad =
     size === "lg"
-      ? "px-14 py-5 text-lg sm:px-16 sm:py-6 sm:text-xl"
+      ? "px-8 py-5 text-base sm:px-14 sm:py-5 sm:text-lg"
       : "px-8 py-3.5 text-sm sm:text-base";
   return (
     <Link
@@ -205,7 +205,7 @@ function BigCTA({
         className="absolute inset-[-25%] rounded-full bg-primary/20 blur-3xl opacity-60 animate-breathe"
         style={{ animationDelay: "-3s" }}
       />
-      <span className="btn-primary relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-[inherit] py-[inherit] transition-transform duration-500 group-hover:scale-[1.03]">
+      <span className="btn-primary relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full whitespace-nowrap px-[inherit] py-[inherit] transition-transform duration-500 group-hover:scale-[1.03]">
         {label}
         <svg
           className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
@@ -340,7 +340,7 @@ function FloatingCTA() {
         <Link
           to="/quiz"
           onClick={() => handleBeginDiscoveryClick("Discover My Soul Sound (floating)")}
-          className="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-base font-semibold tracking-wide shadow-2xl sm:text-lg"
+          className="btn-primary inline-flex items-center justify-center gap-2 rounded-full whitespace-nowrap px-6 py-3 text-sm font-semibold tracking-wide shadow-2xl sm:px-8 sm:py-3.5 sm:text-base"
         >
           Discover My Soul Sound
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
