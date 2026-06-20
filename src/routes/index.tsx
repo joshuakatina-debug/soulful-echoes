@@ -123,7 +123,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-2xl flex-col items-center justify-center px-6 pb-6 pt-2 text-center">
+    <section className="relative mx-auto flex min-h-[calc(100svh-6rem)] max-w-2xl flex-col items-center justify-center px-6 pb-6 pt-2 text-center">
       <h1
         className="font-display animate-fade-up text-[2.25rem] leading-[1.05] sm:text-5xl md:text-6xl"
         style={{ animationDelay: "0.1s" }}
@@ -150,25 +150,6 @@ function Hero() {
           <ReassuranceChip>3 Minutes</ReassuranceChip>
           <ReassuranceChip>Instant Results</ReassuranceChip>
         </div>
-      </div>
-
-      {/* Minimal scroll cue */}
-      <div
-        className="animate-fade-up pointer-events-none absolute inset-x-0 bottom-2 flex flex-col items-center gap-1"
-        style={{ animationDelay: "1s" }}
-      >
-        <span className="text-[10px] uppercase tracking-[0.35em] text-muted-foreground/50">
-          What others felt
-        </span>
-        <svg
-          className="h-4 w-4 animate-bounce text-muted-foreground/50"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
       </div>
     </section>
   );
