@@ -661,7 +661,7 @@ function Results() {
         }`}
       />
 
-      <div className="relative z-10 mx-auto max-w-3xl px-6 pt-8 pb-12 sm:py-24">
+      <div className="relative z-10 mx-auto flex max-w-3xl flex-col px-6 pt-8 pb-12 sm:py-24">
         {/* Nav */}
         <nav
           className={`mb-8 flex items-center justify-between transition-all duration-700 ease-out sm:mb-12 ${
@@ -677,7 +677,7 @@ function Results() {
         </nav>
 
         {/* === STAGE 2: THE ARCHETYPE REVEAL === */}
-        <section className="flex flex-col items-center text-center">
+        <section className="order-1 flex flex-col items-center text-center">
           {/* Celebration */}
           <div
             className={`transition-all duration-700 ease-out ${
@@ -714,30 +714,6 @@ function Results() {
             <p className="font-display mt-3 text-lg italic text-foreground/50 sm:text-xl">
               {content.subtitle}
             </p>
-            <div className="mt-4">
-              <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">
-                Your Soul Sound
-              </p>
-              <p className="font-display mt-1 text-base italic text-foreground/70">
-                Now hear it in sound.
-              </p>
-            </div>
-          </div>
-
-          {/* Primary CTA */}
-          <div
-            className={`mt-5 transition-all duration-700 ease-out ${
-              phase >= 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-            }`}
-          >
-            <ContinueDiscoveringButton
-              isPaid={isPaid}
-              sound={sound}
-              soundSectionRef={soundSectionRef}
-              onPlay={togglePlay}
-              variant="primary"
-              className="px-10 py-4 text-base sm:px-12 sm:py-5 sm:text-lg"
-            />
           </div>
 
           {/* Core Identity summary */}
@@ -754,7 +730,7 @@ function Results() {
 
         {/* Full Core Identity — supporting content */}
         <div
-          className={`mt-12 transition-all duration-1000 ease-out sm:mt-16 ${
+          className={`order-3 mt-12 transition-all duration-1000 ease-out sm:mt-16 ${
             phase >= 5 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
@@ -770,11 +746,11 @@ function Results() {
 
         {/* === SOUL SOUND (editorial centerpiece) === */}
         <div
-          className={`transition-all duration-1000 ease-out ${
-            phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          className={`order-2 mt-6 transition-all duration-1000 ease-out sm:mt-8 ${
+            phase >= 4 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <section id="soul-sound-section" ref={soundSectionRef} className="mt-24 sm:mt-32">
+          <section id="soul-sound-section" ref={soundSectionRef} className="mt-0">
             <article className="relative overflow-hidden rounded-[2rem] border border-foreground/[0.10] bg-foreground/[0.03] px-6 py-14 backdrop-blur-sm sm:px-14 sm:py-20">
               <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[oklch(0.82_0.13_85)] opacity-[0.10] blur-3xl" />
               <div className="pointer-events-none absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-[oklch(0.55_0.18_305)] opacity-[0.10] blur-3xl" />
@@ -956,7 +932,7 @@ function Results() {
 
         {/* === THERE'S MORE TO DISCOVER === */}
         <div
-          className={`transition-all duration-1000 ease-out ${
+          className={`order-4 transition-all duration-1000 ease-out ${
             phase >= 7 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
