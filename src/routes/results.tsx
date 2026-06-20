@@ -762,7 +762,13 @@ function Results() {
                 <h2 className="font-display mt-4 text-4xl leading-[1.05] text-foreground sm:mt-6 sm:text-5xl md:text-6xl">
                   Now hear it in sound.
                 </h2>
-                <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-foreground/70 sm:mt-6 sm:text-lg">
+                <div className="mt-6 flex justify-center sm:mt-8">
+                  <ContinueDiscoveringButton
+                    variant="primary"
+                    className="font-bold"
+                  />
+                </div>
+                <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-foreground/70 sm:mt-8 sm:text-lg">
                   An original instrumental reflection shaped by the rhythm, feeling, and movement of your archetype.
                 </p>
               </div>
@@ -798,10 +804,13 @@ function Results() {
                       </div>
                     ) : (
                       <div className="flex flex-col items-center gap-3">
+                        <ContinueDiscoveringButton
+                          variant="primary"
+                          className="font-bold"
+                        />
                         <p className="mx-auto max-w-md text-sm italic text-foreground/60">
                           Your Soul Sound is ready to be composed when you continue.
                         </p>
-                        <ContinueDiscoveringButton />
                       </div>
                     )}
                   </div>
@@ -1115,8 +1124,8 @@ function ContinueDiscoveringButton({
 
   const baseClass =
     variant === "primary"
-      ? "btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-medium tracking-wide transition disabled:opacity-60 disabled:cursor-not-allowed"
-      : "rounded-full border border-gold/50 bg-gold/[0.15] px-10 py-4 text-base font-medium text-gold shadow-[0_0_24px_-8px_var(--gold)] transition hover:border-gold/70 hover:bg-gold/[0.25] hover:shadow-[0_0_32px_-4px_var(--gold)] disabled:cursor-wait disabled:opacity-60";
+      ? "btn-primary inline-flex items-center justify-center rounded-full px-10 py-4 text-base font-bold tracking-wide transition disabled:opacity-60 disabled:cursor-not-allowed"
+      : "rounded-full border border-gold/50 bg-gold/[0.15] px-10 py-4 text-base font-bold text-gold shadow-[0_0_24px_-8px_var(--gold)] transition hover:border-gold/70 hover:bg-gold/[0.25] hover:shadow-[0_0_32px_-4px_var(--gold)] disabled:cursor-wait disabled:opacity-60";
 
   return (
     <div className="flex flex-col items-center gap-3">
