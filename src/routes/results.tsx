@@ -804,10 +804,13 @@ function Results() {
                       </div>
                     ) : (
                       <div className="flex flex-col items-center gap-3">
+                        <ContinueDiscoveringButton
+                          variant="primary"
+                          className="font-bold"
+                        />
                         <p className="mx-auto max-w-md text-sm italic text-foreground/60">
                           Your Soul Sound is ready to be composed when you continue.
                         </p>
-                        <ContinueDiscoveringButton />
                       </div>
                     )}
                   </div>
